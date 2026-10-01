@@ -9,5 +9,6 @@ import { AuctionsController } from './auctions.controller.js'
   imports: [TypeOrmModule.forFeature([Auction]), VehiclesModule],
   controllers: [AuctionsController],
   providers: [AuctionsService],
+  exports: [AuctionsService],
 })
 export class AuctionsModule {}

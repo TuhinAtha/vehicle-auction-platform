@@ -12,8 +12,10 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm'
+import { Bid } from '../../bids/entities/bid.entity.js'
 import { Vehicle } from '../../vehicles/entities/vehicle.entity.js'
 
 @Entity('auctions')
@@ -23,7 +25,7 @@ export class Auction {
 
   @ManyToOne(() => Vehicle, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'vehicleId' })
-  vehicle: Vehicle
+  vehicle: Relation<Vehicle>
 
   @Index()
   @Column({ type: 'uuid' })
@@ -60,8 +62,11 @@ export class Auction {
   })
   result: AuctionResult | null
 
-  // TODO: replace with a relation to Bid once bids are implemented
   /** Set when the auction ends as SOLD */
+  @ManyToOne(() => Bid, { nullable: true, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'winningBidId' })
+  winningBid: Relation<Bid> | null
+
   @Column({ type: 'uuid', nullable: true })
   winningBidId: string | null
 

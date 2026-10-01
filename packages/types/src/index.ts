@@ -47,3 +47,15 @@ export type CreateAuctionInput = Pick<
   Auction,
   'vehicleId' | 'startsAt' | 'endsAt' | 'reservePrice' | 'minIncrement'
 >
+
+export interface Bid {
+  id: string
+  auctionId: string
+  dealerId: string
+  /** Whole currency units */
+  amount: number
+  /** When the bid was placed */
+  createdAt: string
+}
+
+export type CreateBidInput = Pick<Bid, 'dealerId' | 'amount'>
