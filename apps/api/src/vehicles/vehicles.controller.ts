@@ -6,6 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 import { VehiclesService } from './vehicles.service.js'
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js'
@@ -26,17 +29,21 @@ export class VehiclesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.vehiclesService.findOne(+id)
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.vehiclesService.findOne(id)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
-    return this.vehiclesService.update(+id, updateVehicleDto)
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateVehicleDto: UpdateVehicleDto,
+  ) {
+    return this.vehiclesService.update(id, updateVehicleDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.vehiclesService.remove(+id)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.vehiclesService.remove(id)
   }
 }
