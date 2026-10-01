@@ -4,12 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { QueryFailedError, Repository } from 'typeorm'
+import { Repository } from 'typeorm'
+import { isPgError, PgErrorCode } from '../common/utils/pg.util.js'
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js'
 import { UpdateVehicleDto } from './dto/update-vehicle.dto.js'
 import { Vehicle } from './entities/vehicle.entity.js'
-
-const PG_UNIQUE_VIOLATION = '23505'
 
 @Injectable()
 export class VehiclesService {
@@ -38,18 +37,24 @@ export class VehiclesService {
   }
 
   async remove(id: string) {
-    const { affected } = await this.vehicles.delete({ id })
-    if (!affected) throw new NotFoundException(`Vehicle ${id} not found`)
+    try {
+      const { affected } = await this.vehicles.delete({ id })
+      if (!affected) throw new NotFoundException(`Vehicle ${id} not found`)
+    } catch (error) {
+      if (isPgError(error, PgErrorCode.ForeignKeyViolation)) {
+        throw new ConflictException(
+          `Vehicle ${id} has auctions and cannot be deleted`,
+        )
+      }
+      throw error
+    }
   }
 
   private async save(vehicle: Vehicle) {
     try {
       return await this.vehicles.save(vehicle)
     } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        (error.driverError as { code?: string }).code === PG_UNIQUE_VIOLATION
-      ) {
+      if (isPgError(error, PgErrorCode.UniqueViolation)) {
         throw new ConflictException(
           `A vehicle with VIN ${vehicle.vin} already exists`,
         )
