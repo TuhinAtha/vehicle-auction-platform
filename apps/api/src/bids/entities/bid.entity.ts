@@ -9,6 +9,7 @@ import {
   type Relation,
 } from 'typeorm'
 import { Auction } from '../../auctions/entities/auction.entity.js'
+import { User } from '../../users/entities/user.entity.js'
 
 @Entity('bids')
 @Index(['auctionId', 'amount'])
@@ -23,7 +24,10 @@ export class Bid {
   @Column({ type: 'uuid' })
   auctionId: string
 
-  // TODO: replace with a relation to Dealer once dealers are implemented
+  @ManyToOne(() => User, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'dealerId' })
+  dealer: Relation<User>
+
   @Index()
   @Column({ type: 'uuid' })
   dealerId: string

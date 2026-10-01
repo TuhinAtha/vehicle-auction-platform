@@ -6,6 +6,7 @@ import { VehiclesModule } from './vehicles/vehicles.module.js'
 import { HealthModule } from './health/health.module.js'
 import { AuctionsModule } from './auctions/auctions.module.js'
 import { BidsModule } from './bids/bids.module.js'
+import { UsersModule } from './users/users.module.js'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { BidsModule } from './bids/bids.module.js'
     HealthModule,
     AuctionsModule,
     BidsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

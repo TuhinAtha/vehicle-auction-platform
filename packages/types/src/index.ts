@@ -59,3 +59,17 @@ export interface Bid {
 }
 
 export type CreateBidInput = Pick<Bid, 'dealerId' | 'amount'>
+
+export const USER_ROLES = ['ADMIN', 'DEALER'] as const
+export type UserRole = (typeof USER_ROLES)[number]
+
+export interface User {
+  id: string
+  email: string
+  role: UserRole
+  name: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type CreateUserInput = Pick<User, 'email' | 'role' | 'name'>
