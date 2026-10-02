@@ -17,9 +17,14 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Vehicle Auction API')
     .setVersion('0.0.1')
+    .addBearerAuth()
+    .addSecurityRequirements('bearer')
     .build()
-  SwaggerModule.setup('api/docs', app, () =>
-    SwaggerModule.createDocument(app, swaggerConfig),
+  SwaggerModule.setup(
+    'api/docs',
+    app,
+    () => SwaggerModule.createDocument(app, swaggerConfig),
+    { swaggerOptions: { persistAuthorization: true } },
   )
 
   await app.listen(Number(process.env.PORT ?? 3001), '0.0.0.0')

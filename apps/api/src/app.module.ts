@@ -8,6 +8,7 @@ import { HealthModule } from './health/health.module.js'
 import { AuctionsModule } from './auctions/auctions.module.js'
 import { BidsModule } from './bids/bids.module.js'
 import { UsersModule } from './users/users.module.js'
+import { AuthModule } from './auth/auth.module.js'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module.js'
     AuctionsModule,
     BidsModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

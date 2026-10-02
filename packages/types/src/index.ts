@@ -73,3 +73,22 @@ export interface User {
 }
 
 export type CreateUserInput = Pick<User, 'email' | 'role' | 'name'>
+
+export interface JwtPayload {
+  sub: string
+  email: string
+  name: string
+  role: UserRole
+}
+
+export interface LoginInput {
+  email: string
+  password: string
+}
+
+export type AuthUser = Pick<JwtPayload, 'email' | 'name' | 'role'>
+
+export interface LoginResponse {
+  accessToken: string
+  user: AuthUser
+}

@@ -31,6 +31,12 @@ export class UsersService {
     return user
   }
 
+  async findOnByEmail(email: string) {
+    const user = await this.users.findOneBy({ email })
+    if (!user) throw new NotFoundException(`User with ${email} email not found`)
+    return user
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id)
     return this.save(this.users.merge(user, updateUserDto))
