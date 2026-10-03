@@ -3,8 +3,8 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 
-import { LogoutButton } from "./logout-button.client.cmp"
-import { NavLink } from "./nav-link.client.cmp"
+import { LogoutButton } from "./LogoutButton"
+import { NavLink } from "./NavLink"
 
 type AppBarProps = {
   navs: { path: string; text: string; exact?: boolean }[]

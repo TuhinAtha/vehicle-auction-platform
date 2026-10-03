@@ -1,4 +1,4 @@
-import { type LoginInput } from '@repo/types'
+import { type LoginInput } from '@repo/shared'
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator'
 
 export class LoginDto implements LoginInput {

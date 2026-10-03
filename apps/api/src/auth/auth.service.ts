@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { UsersService } from '../users/users.service.js'
 import { JwtService } from '@nestjs/jwt'
-import { JwtPayload } from '@repo/types'
+import { JwtPayload } from '@repo/shared'
 import * as bcrypt from 'bcrypt'
 
 const PASSWORD_HASH =

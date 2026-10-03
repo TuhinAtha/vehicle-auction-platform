@@ -1,1 +1,1 @@
-export { AppBar } from "./app-bar.cmp"
+export { AppBar } from "./AppBar"

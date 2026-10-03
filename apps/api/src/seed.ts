@@ -4,7 +4,7 @@ import type {
   AuctionResult,
   AuctionStatus,
   CreateVehicleInput,
-} from '@repo/types'
+} from '@repo/shared'
 import { DataSource } from 'typeorm'
 import { AppModule } from './app.module.js'
 import { Auction } from './auctions/entities/auction.entity.js'
@@ -81,7 +81,7 @@ try {
     const tables = dataSource.entityMetadatas.map((e) => `"${e.tableName}"`)
     await m.query(`TRUNCATE ${tables.join(', ')} CASCADE`)
 
-    const [tesla, ioniq5, i4, zoe] = await m.save(Vehicle, [
+    const [tesla, ioniq5, i4, zoe, polestar] = await m.save(Vehicle, [
       ev('5YJ3E1EA7MF000001', 'Tesla', 'Model 3 Long Range', 2021, 'Berlin'),
       ev('KMHKN81AFNU000003', 'Hyundai', 'Ioniq 5', 2022, 'Hamburg'),
       ev('WBY71AW05PF000005', 'BMW', 'i4 eDrive40', 2023, 'Frankfurt'),
@@ -104,6 +104,7 @@ try {
       auction(ioniq5, 24, 30, 30000, 'SCHEDULED'),
       auction(i4, -48, -42, 38000, 'ENDED', 'SOLD'),
       auction(zoe, -30, -24, 12000, 'ENDED', 'UNSOLD'),
+      auction(polestar, -8, -1, 35000, 'ENDED'),
     ])
 
     const bids = await m.save(Bid, [

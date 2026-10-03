@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { JwtPayload, UserRole } from '@repo/types'
+import { JwtPayload, UserRole } from '@repo/shared'
 import { ROLE_KEY } from './decorators.js'
 
 // Runs after JwtAuthGuard, so req.user is set for every non-public route.

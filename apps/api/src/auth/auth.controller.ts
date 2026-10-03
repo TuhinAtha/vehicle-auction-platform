@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common'
-import type { AuthUser, JwtPayload } from '@repo/types'
+import type { AuthUser, JwtPayload } from '@repo/shared'
 import { AuthService } from './auth.service.js'
 import { CurrentUser, Public } from './decorators.js'
 import { LoginDto } from './dto/login.dto.js'

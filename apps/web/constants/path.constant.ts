@@ -1,4 +1,4 @@
-import type { UserRole } from "@repo/types"
+import type { UserRole } from "@repo/shared"
 
 export const LOGIN_PATH = "/login"
 export const HOME_PATH = "/"

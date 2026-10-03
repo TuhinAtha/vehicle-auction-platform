@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   SetMetadata,
 } from '@nestjs/common'
-import { JwtPayload, UserRole } from '@repo/types'
+import { JwtPayload, UserRole } from '@repo/shared'
 
 export const IS_PUBLIC_KEY = 'isPublic'
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true)

@@ -1,4 +1,4 @@
-import type { CreateVehicleInput } from '@repo/types'
+import type { CreateVehicleInput } from '@repo/shared'
 import {
   IsArray,
   IsDateString,

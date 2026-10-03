@@ -1,5 +1,5 @@
 import { cookies } from "next/headers"
-import type { LoginResponse } from "@repo/types"
+import type { LoginResponse } from "@repo/shared"
 
 import { tokenMaxAge } from "@/lib/auth"
 import { AUTH_COOKIE } from "@/constants/auth.constant"

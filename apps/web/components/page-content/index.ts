@@ -1,1 +1,1 @@
-export { PageContent } from "./page-content"
+export { PageContent } from "./PageContent"

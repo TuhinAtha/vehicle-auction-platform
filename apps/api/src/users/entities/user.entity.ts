@@ -1,4 +1,4 @@
-import { USER_ROLES, type UserRole } from '@repo/types'
+import { USER_ROLES, type UserRole } from '@repo/shared'
 import {
   Column,
   CreateDateColumn,

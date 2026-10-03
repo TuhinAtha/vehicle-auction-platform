@@ -1,4 +1,4 @@
-import type { UserRole } from "@repo/types"
+import type { UserRole } from "@repo/shared"
 
 import { ROLE_HOME } from "@/constants/path.constant"
 import { decodeJwtPayload } from "@/lib/jwt"

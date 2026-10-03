@@ -3,7 +3,7 @@ import {
   AUCTION_STATUSES,
   type AuctionResult,
   type AuctionStatus,
-} from '@repo/types'
+} from '@repo/shared'
 import {
   Column,
   CreateDateColumn,

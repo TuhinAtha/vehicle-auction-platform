@@ -1,4 +1,4 @@
-import type { UserRole } from "@repo/types"
+import type { UserRole } from "@repo/shared"
 import { HOME_PATH, LOGIN_PATH, ROLE_HOME } from "@/constants/path.constant"
 
 export function shouldSendToRoleHome(pathname: string, role: UserRole) {

@@ -1,4 +1,4 @@
-import type { CreateAuctionInput } from '@repo/types'
+import type { CreateAuctionInput } from '@repo/shared'
 import { IsDateString, IsInt, IsUUID, Min } from 'class-validator'
 
 export class CreateAuctionDto implements CreateAuctionInput {

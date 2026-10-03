@@ -1,9 +1,9 @@
 {
-  "name": "@repo/types",
+  "name": "@repo/shared",
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
