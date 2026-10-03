@@ -14,7 +14,6 @@ export const NavLink = ({
   children,
 }: {
   href: string
-  /** Only active on `href` itself, not on its subpaths. */
   exact?: boolean
   children: React.ReactNode
 }) => {

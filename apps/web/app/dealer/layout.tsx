@@ -8,8 +8,9 @@ export default function DealerLayout({
   return (
     <>
       <AppBar
+        displayMode="dealer"
         navs={[
-          { path: "/dealer", text: "Auctions", exact: true },
+          { path: "/dealer/auctions", text: "Auctions", exact: true },
           { path: "/dealer/mybids", text: "My bids" },
         ]}
       />

@@ -8,8 +8,9 @@ export default function AdminLayout({
   return (
     <>
       <AppBar
+        displayMode="admin"
         navs={[
-          { path: "/admin", text: "Auctions", exact: true },
+          { path: "/admin/auctions", text: "Auctions", exact: true },
           { path: "/admin/vehicles", text: "Vehicles" },
         ]}
       />
