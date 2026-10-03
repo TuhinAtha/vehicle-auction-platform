@@ -11,6 +11,8 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
@@ -66,12 +68,15 @@ export class Auction {
   result: AuctionResult | null
 
   /** Set when the auction ends as SOLD */
-  @ManyToOne(() => Bid, { nullable: true, onDelete: 'RESTRICT' })
+  @OneToOne(() => Bid, { nullable: true, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'winningBidId' })
   winningBid: Relation<Bid> | null
 
   @Column({ type: 'uuid', nullable: true })
   winningBidId: string | null
+
+  @OneToMany(() => Bid, (bid) => bid.auction)
+  bids: Relation<Bid[]>
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date

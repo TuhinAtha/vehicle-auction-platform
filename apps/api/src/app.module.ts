@@ -25,7 +25,7 @@ import { AuthModule } from './auth/auth.module.js'
         password: config.get('POSTGRES_PASSWORD', 'password'),
         database: config.get('POSTGRES_DB', 'db'),
         autoLoadEntities: true,
-        synchronize: config.get('DB_SYNC') !== 'false', // dev only; use migrations in production
+        synchronize: config.get('DB_SYNC') !== 'false', // dev only
       }),
     }),
     VehiclesModule,

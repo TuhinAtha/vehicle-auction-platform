@@ -1,13 +1,21 @@
 import type { Auction } from "@repo/shared"
 import { datetime } from "@/lib/datetime"
 
-export function getTimingLabel({ status, startsAt, endsAt }: Auction) {
+type Timing = Pick<Auction, "status" | "startsAt" | "endsAt">
+
+/** The date that matters for the auction's current status, with its label. */
+export function getTiming({ status, startsAt, endsAt }: Timing) {
   switch (status) {
     case "SCHEDULED":
-      return `Starts ${datetime.format(new Date(startsAt))}`
+      return { label: "Starts", date: datetime.format(new Date(startsAt)) }
     case "LIVE":
-      return `Ends ${datetime.format(new Date(endsAt))}`
+      return { label: "Ends", date: datetime.format(new Date(endsAt)) }
     case "ENDED":
-      return `Ended ${datetime.format(new Date(endsAt))}`
+      return { label: "Ended", date: datetime.format(new Date(endsAt)) }
   }
+}
+
+export function getTimingLabel(auction: Timing) {
+  const { label, date } = getTiming(auction)
+  return `${label} ${date}`
 }

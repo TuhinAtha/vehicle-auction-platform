@@ -4,11 +4,12 @@ const parsePhase = (value: unknown): AuctionPhase | undefined =>
   AUCTION_PHASES.find((phase) => phase === value)
 
 import type { SearchParams } from "@/types/next"
+import { AuctionsQueryParams } from "../types"
 
-export const getSearchParams = async (
+export const toQueryParams = async (
   searchParams: SearchParams
-): Promise<{ phase?: AuctionPhase }> => {
-  const awaitedSearchParams = await searchParams
-  const phase = parsePhase(awaitedSearchParams["phase"])
+): Promise<AuctionsQueryParams> => {
+  const queryParams = await searchParams
+  const phase = parsePhase(queryParams["phase"])
   return { phase }
 }

@@ -6,14 +6,13 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
-  type AdminAuctionListItem,
   AUCTION_PHASES,
   type AuctionPhase,
   type AuctionPhaseCounts,
   DEALER_AUCTION_EXCLUDED_FIELDS,
   DEALER_AUCTION_PHASES,
-  type DealerAuctionListItem,
   type DealerAuctionPhase,
+  type JwtPayload,
   type UserRole,
 } from '@repo/shared'
 import {
@@ -54,26 +53,48 @@ export class AuctionsService {
     return this.auctions.save(auction)
   }
 
-  async findAll(
-    role: UserRole,
-    phase?: AuctionPhase | DealerAuctionPhase,
-  ): Promise<
-    AdminAuctionListItem<Auction>[] | DealerAuctionListItem<Auction>[]
-  > {
+  async findAll(viewer: JwtPayload, phase?: AuctionPhase | DealerAuctionPhase) {
     const auctions = await this.auctions.find({
-      select: this.selectFor(role),
-      where: this.getClauseForPhase(role, phase),
+      select: this.selectFor(viewer.role),
+      where: this.getClauseForPhase(viewer.role, phase),
       relations: { vehicle: true },
       order: { startsAt: 'ASC' },
     })
+    const auctionIds = auctions.map(({ id }) => id)
 
-    if (role !== 'ADMIN') return auctions
+    if (viewer.role === 'ADMIN') {
+      const bids = await this.summariseBids(auctionIds)
+      return auctions.map((auction) => ({
+        ...auction,
+        bidCount: bids.get(auction.id)?.count ?? 0,
+        maxBidAmount: bids.get(auction.id)?.max ?? null,
+      }))
+    }
 
-    const bidCounts = await this.countBids(auctions.map(({ id }) => id))
+    const ownBids = await this.summariseBids(auctionIds, viewer.sub)
     return auctions.map((auction) => ({
       ...auction,
-      bidCount: bidCounts.get(auction.id) ?? 0,
+      myBidAmount: ownBids.get(auction.id)?.max ?? null,
     }))
+  }
+
+  /** The full auction: admins get every bid, dealers their own highest one. */
+  async findOneFor(id: string, viewer: JwtPayload) {
+    const isAdmin = viewer.role === 'ADMIN'
+    const auction = await this.auctions.findOne({
+      select: this.selectFor(viewer.role),
+      where: { id },
+      relations: { vehicle: true, bids: isAdmin },
+      order: isAdmin ? { bids: { createdAt: 'DESC' } } : undefined,
+    })
+    if (!auction) throw new NotFoundException(`Auction ${id} not found`)
+    if (isAdmin) return auction
+
+    const myBid = await this.auctions.manager.findOne(Bid, {
+      where: { auctionId: id, dealerId: viewer.sub },
+      order: { amount: 'DESC' },
+    })
+    return { ...auction, myBid }
   }
 
   /** Number of auctions in each phase the role can see. */
@@ -112,24 +133,32 @@ export class AuctionsService {
     }
   }
 
-  /** Bid count per auction, in one grouped query. */
-  private async countBids(auctionIds: string[]) {
-    if (auctionIds.length === 0) return new Map<string, number>()
+  private async summariseBids(auctionIds: string[], dealerId?: string) {
+    if (auctionIds.length === 0) {
+      return new Map<string, { count: number; max: number }>()
+    }
 
-    const rows = await this.auctions.manager
+    const query = this.auctions.manager
       .createQueryBuilder(Bid, 'bid')
       .select('bid.auctionId', 'auctionId')
       .addSelect('COUNT(*)::int', 'count')
+      .addSelect('MAX(bid.amount)', 'max')
       .where('bid.auctionId IN (:...auctionIds)', { auctionIds })
       .groupBy('bid.auctionId')
-      .getRawMany<{ auctionId: string; count: number }>()
+    if (dealerId) query.andWhere('bid.dealerId = :dealerId', { dealerId })
 
-    return new Map(rows.map(({ auctionId, count }) => [auctionId, count]))
+    const rows = await query.getRawMany<{
+      auctionId: string
+      count: number
+      max: number
+    }>()
+    return new Map(
+      rows.map(({ auctionId, ...summary }) => [auctionId, summary]),
+    )
   }
 
-  async findOne(id: string, viewerRole?: UserRole) {
+  async findOne(id: string) {
     const auction = await this.auctions.findOne({
-      select: this.selectFor(viewerRole),
       where: { id },
       relations: { vehicle: true },
     })
@@ -137,8 +166,8 @@ export class AuctionsService {
     return auction
   }
 
-  private selectFor(role?: UserRole): FindOptionsSelect<Auction> | undefined {
-    if (role === undefined || role === 'ADMIN') return undefined
+  private selectFor(role: UserRole): FindOptionsSelect<Auction> | undefined {
+    if (role === 'ADMIN') return undefined
     return Object.fromEntries(
       this.auctions.metadata.columns
         .map(({ propertyName }) => propertyName)

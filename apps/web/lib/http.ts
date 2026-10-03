@@ -1,10 +1,10 @@
-export type Params = Record<
+export type QueryParams = Record<
   string,
   string | number | boolean | null | undefined
 >
 
 export type FetchOptions = Omit<RequestInit, "body"> & {
-  params?: Params
+  queryParams?: QueryParams
   body?: unknown
 }
 
@@ -18,9 +18,9 @@ export class ApiError extends Error {
   }
 }
 
-function withParams(url: string, params?: Params) {
+function withQueryParams(url: string, queryParams?: QueryParams) {
   const qs = new URLSearchParams()
-  for (const [key, value] of Object.entries(params ?? {})) {
+  for (const [key, value] of Object.entries(queryParams ?? {})) {
     if (value !== undefined && value !== null) qs.append(key, String(value))
   }
   const query = qs.toString()
@@ -52,9 +52,9 @@ function errorMessage(data: unknown): string | undefined {
  */
 export async function request<T>(
   url: string,
-  { params, body, headers, ...init }: FetchOptions = {}
+  { queryParams, body, headers, ...init }: FetchOptions = {}
 ): Promise<T> {
-  const fullUrl = withParams(url, params)
+  const fullUrl = withQueryParams(url, queryParams)
   const finalHeaders = new Headers(headers)
 
   let finalBody: BodyInit | undefined

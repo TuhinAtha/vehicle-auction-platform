@@ -1,20 +1,21 @@
-import type { Auction, AuctionPhase, AuctionPhaseCounts } from "@repo/shared"
+import type { AuctionPhaseCounts } from "@repo/shared"
 import { queryOptions } from "@tanstack/react-query"
+import type { AuctionsQueryParams, AuctionSummary } from "../types"
 
 import { fetchBff } from "@/lib/fetch-bff"
 import { AUCTION_ENDPOINTS } from "./endpoints"
 import { AUCTION_QUERY_KEYS } from "./queryKeys"
 
 export const getAuctionsQuery = ({
-  searchParams,
+  queryParams,
 }: {
-  searchParams?: { phase?: AuctionPhase }
+  queryParams?: AuctionsQueryParams
 }) =>
   queryOptions({
-    queryKey: AUCTION_QUERY_KEYS.list(searchParams),
+    queryKey: AUCTION_QUERY_KEYS.list(queryParams),
     queryFn: ({ signal }) =>
-      fetchBff<Auction[]>(AUCTION_ENDPOINTS.root, {
-        params: searchParams,
+      fetchBff<AuctionSummary[]>(AUCTION_ENDPOINTS.root, {
+        queryParams,
         signal,
       }),
   })

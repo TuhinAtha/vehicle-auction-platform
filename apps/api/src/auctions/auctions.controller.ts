@@ -29,7 +29,7 @@ export class AuctionsController {
     @Query() { phase }: ListAuctionsQueryDto,
     @CurrentUser() user: JwtPayload,
   ) {
-    return this.auctionsService.findAll(user.role, phase)
+    return this.auctionsService.findAll(user, phase)
   }
 
   @Get('counts')
@@ -42,7 +42,7 @@ export class AuctionsController {
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: JwtPayload,
   ) {
-    return this.auctionsService.findOne(id, user.role)
+    return this.auctionsService.findOneFor(id, user)
   }
 
   @Patch(':id')

@@ -1,4 +1,10 @@
-import type { AuctionResult, AuctionStatus } from '../types/auction.type'
+import type {
+  AuctionResult,
+  AuctionStatus,
+  DealerAuctionExcludedField,
+} from '../types/auction.type'
+import type { Bid } from './bid.interface'
+import type { Vehicle } from './vehicle.interface'
 
 export interface Auction {
   id: string
@@ -18,4 +24,38 @@ export interface Auction {
   winningBidId: string | null
   createdAt: string
   updatedAt: string
+}
+
+/** GET /auctions/:id as an admin. */
+export interface AuctionDetailAdmin extends Auction {
+  vehicle: Vehicle
+  bids: Bid[]
+}
+
+/** GET /auctions/:id as a dealer: the excluded fields stay hidden. */
+export interface AuctionDetailDealer extends Omit<
+  Auction,
+  DealerAuctionExcludedField
+> {
+  vehicle: Vehicle
+  /** The dealer's own highest bid, if any */
+  myBid: Bid | null
+}
+
+/** GET /auctions as an admin. */
+export interface AuctionSummaryAdmin extends Auction {
+  vehicle: Vehicle
+  bidCount: number
+  /** Highest bid amount, if any */
+  maxBidAmount: number | null
+}
+
+/** GET /auctions as a dealer: the excluded fields stay hidden. */
+export interface AuctionSummaryDealer extends Omit<
+  Auction,
+  DealerAuctionExcludedField
+> {
+  vehicle: Vehicle
+  /** The dealer's own highest bid amount, if any */
+  myBidAmount: number | null
 }

@@ -1,8 +1,12 @@
-export type JwtPayload = { exp?: number; role?: string }
+export type JwtPayload = {
+  exp?: number
+  role?: string
+  email?: string
+  name?: string
+}
 
 /**
  * Decodes a JWT's payload without verifying its signature, or null if malformed.
- * Only use the result for UI/routing decisions — the API does the real check.
  */
 export function decodeJwtPayload(token: string): JwtPayload | null {
   try {

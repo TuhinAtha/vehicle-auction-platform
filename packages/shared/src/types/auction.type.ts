@@ -18,16 +18,8 @@ export type DealerAuctionPhase = (typeof DEALER_AUCTION_PHASES)[number]
 /** GET /auctions/counts: only the phases the caller can see are present. */
 export type AuctionPhaseCounts = Partial<Record<AuctionPhase, number>>
 
-export type AdminAuctionListItem<A = Auction> = A & { bidCount: number }
-
 export type DealerAuctionExcludedField =
   (typeof DEALER_AUCTION_EXCLUDED_FIELDS)[number]
-
-/** GET /auctions as a dealer: the excluded fields stay hidden. */
-export type DealerAuctionListItem<A = Auction> = Omit<
-  A,
-  DealerAuctionExcludedField
->
 
 export type CreateAuctionInput = Pick<
   Auction,

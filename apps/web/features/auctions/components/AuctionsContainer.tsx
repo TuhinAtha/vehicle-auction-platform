@@ -1,24 +1,15 @@
 "use client"
 
-import type { AuctionPhase } from "@repo/shared"
 import { useAuctions } from "@/features/auctions/hooks/useAuctions"
 import { AuctionCardGrid } from "@/features/auctions/components/AuctionCardGrid"
-import { AuctionList } from "@/features/auctions/components/AuctionList"
-import { useMemo } from "react"
+import type { AuctionsQueryParams } from "../types"
 
 type AuctionsContainerProps = {
-  phase?: AuctionPhase
-  displayMode?: "grid" | "list"
+  queryParams?: AuctionsQueryParams
 }
-export const AuctionsContainer = ({
-  phase,
-  displayMode = "list",
-}: AuctionsContainerProps) => {
-  const Component = useMemo(
-    () => (displayMode === "grid" ? AuctionCardGrid : AuctionList),
-    [displayMode]
-  )
-  const { data, isPending, isError } = useAuctions({ phase })
+
+export const AuctionsContainer = ({ queryParams }: AuctionsContainerProps) => {
+  const { data, isPending, isError } = useAuctions(queryParams)
 
   if (isPending) {
     return <p className="text-sm text-muted-foreground">Loading auctions…</p>
@@ -31,5 +22,5 @@ export const AuctionsContainer = ({
     )
   }
 
-  return <Component auctions={data} />
+  return <AuctionCardGrid auctions={data} />
 }

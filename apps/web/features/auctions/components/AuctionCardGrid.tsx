@@ -1,7 +1,16 @@
-import type { Auction } from "@repo/shared"
-import { AuctionCard } from "./AuctionCard"
+import type { AuctionSummaryAdmin, AuctionSummaryDealer } from "@repo/shared"
+import { useUser } from "@/providers/UserProvider"
+import type { AuctionSummary } from "../types"
+import { AuctionCardAdmin } from "./AuctionCardAdmin"
+import { AuctionCardDealer } from "./AuctionCardDealer"
 
-export const AuctionCardGrid = ({ auctions }: { auctions: Auction[] }) => {
+export const AuctionCardGrid = ({
+  auctions,
+}: {
+  auctions: AuctionSummary[]
+}) => {
+  const { role } = useUser()
+
   if (auctions.length === 0) {
     return (
       <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
@@ -11,10 +20,14 @@ export const AuctionCardGrid = ({ auctions }: { auctions: Auction[] }) => {
   }
 
   return (
-    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {auctions.map((auction) => (
         <li key={auction.id}>
-          <AuctionCard auction={auction} />
+          {role === "DEALER" ? (
+            <AuctionCardDealer auction={auction as AuctionSummaryDealer} />
+          ) : (
+            <AuctionCardAdmin auction={auction as AuctionSummaryAdmin} />
+          )}
         </li>
       ))}
     </ul>

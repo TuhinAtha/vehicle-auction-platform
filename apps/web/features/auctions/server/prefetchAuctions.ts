@@ -1,25 +1,24 @@
 import type { QueryClient } from "@tanstack/react-query"
-import type { Auction, AuctionPhase, AuctionPhaseCounts } from "@repo/shared"
+import type { AuctionPhaseCounts } from "@repo/shared"
 import {
   getAuctionsQuery,
   getAuctionPhaseCountsQuery,
 } from "@/features/auctions/data/queries"
 import { fetchApi } from "@/lib/fetch-api"
 import { AUCTION_ENDPOINTS } from "../data/endpoints"
+import type { AuctionsQueryParams, AuctionSummary } from "../types"
 
 export async function prefetchAuctions(
   queryClient: QueryClient,
-  searchParams?: {
-    phase?: AuctionPhase
-  }
+  queryParams?: AuctionsQueryParams
 ) {
   await Promise.all([
     queryClient
       .query({
-        ...getAuctionsQuery({ searchParams }),
+        ...getAuctionsQuery({ queryParams }),
         queryFn: () =>
-          fetchApi<Auction[]>(AUCTION_ENDPOINTS.root, {
-            params: searchParams,
+          fetchApi<AuctionSummary[]>(AUCTION_ENDPOINTS.root, {
+            queryParams,
           }),
       })
       .catch(() => undefined),
