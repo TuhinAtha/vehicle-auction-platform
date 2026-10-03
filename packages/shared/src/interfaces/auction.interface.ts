@@ -6,6 +6,8 @@ export interface Auction {
   startsAt: string // ISO 8601
   endsAt: string // ISO 8601
   /** Whole currency units */
+  startingPrice: number
+  /** Whole currency units */
   reservePrice: number
   /** Whole currency units */
   minIncrement: number

@@ -16,6 +16,11 @@ export class CreateAuctionDto implements CreateAuctionInput {
   /** Whole currency units */
   @IsInt()
   @Min(0)
+  startingPrice: number
+
+  /** Whole currency units */
+  @IsInt()
+  @Min(0)
   reservePrice: number
 
   /** Whole currency units */

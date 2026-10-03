@@ -37,6 +37,9 @@ export class Auction {
   @Column({ type: 'timestamptz' })
   endsAt: Date
 
+  @Column({ type: 'int' })
+  startingPrice: number
+
   /** Whole currency units */
   @Column({ type: 'int' })
   reservePrice: number

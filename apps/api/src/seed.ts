@@ -46,6 +46,7 @@ const auction = (
   vehicle: Vehicle,
   startsInHours: number,
   endsInHours: number,
+  startingPrice: number,
   reservePrice: number,
   status: AuctionStatus,
   result: AuctionResult | null = null,
@@ -53,6 +54,7 @@ const auction = (
   vehicleId: vehicle.id,
   startsAt: hoursFromNow(startsInHours),
   endsAt: hoursFromNow(endsInHours),
+  startingPrice,
   reservePrice,
   minIncrement: 250,
   status,
@@ -100,19 +102,19 @@ try {
     ])
 
     const [live, , sold, unsold] = await m.save(Auction, [
-      auction(tesla, -2, 4, 28000, 'LIVE'),
-      auction(ioniq5, 24, 30, 30000, 'SCHEDULED'),
-      auction(i4, -48, -42, 38000, 'ENDED', 'SOLD'),
-      auction(zoe, -30, -24, 12000, 'ENDED', 'UNSOLD'),
-      auction(polestar, -8, -1, 35000, 'ENDED'),
+      auction(tesla, -2, 4, 25000, 28000, 'LIVE'),
+      auction(ioniq5, 24, 30, 27000, 30000, 'SCHEDULED'),
+      auction(i4, -48, -42, 35000, 38000, 'ENDED', 'SOLD'),
+      auction(zoe, -30, -24, 10000, 12000, 'ENDED', 'UNSOLD'),
+      auction(polestar, -8, -1, 30000, 35000, 'ENDED'),
     ])
 
     const bids = await m.save(Bid, [
-      bid(live, berlin, 24000, -1.5),
-      bid(live, munich, 25000, -0.5),
+      bid(live, berlin, 25500, -1.5),
+      bid(live, munich, 26500, -0.5),
       bid(sold, munich, 37000, -46),
       bid(sold, berlin, 39000, -43),
-      bid(unsold, berlin, 9500, -26),
+      bid(unsold, berlin, 10500, -26),
     ])
     await m.update(Auction, sold.id, { winningBidId: bids[3].id })
   })
