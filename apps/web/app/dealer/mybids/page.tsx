@@ -1,9 +1,9 @@
-import { PageContent } from "@/components/page-content"
+import { Page } from "@/components/Page"
 
 export default function DealerMybidsPage() {
   return (
-    <PageContent>
+    <Page>
       <div>Dealer Mybids</div>
-    </PageContent>
+    </Page>
   )
 }

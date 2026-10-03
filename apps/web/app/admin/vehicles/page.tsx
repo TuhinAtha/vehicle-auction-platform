@@ -1,9 +1,9 @@
-import { PageContent } from "@/components/page-content"
+import { Page } from "@/components/Page"
 
 export default function AdminVehiclesPage() {
   return (
-    <PageContent>
+    <Page>
       <div>Admin Vehicles</div>
-    </PageContent>
+    </Page>
   )
 }

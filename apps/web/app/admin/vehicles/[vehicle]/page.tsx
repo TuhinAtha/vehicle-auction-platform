@@ -1,4 +1,4 @@
-import { PageContent } from "@/components/page-content"
+import { PageContent } from "@/components/PageContent"
 
 export default function AdminVehiclePage() {
   return (

@@ -1,11 +1,13 @@
 import { prefetchAuctions } from "@/features/auctions/server/prefetchAuctions"
 import type { SearchParams } from "@/types/next"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-
-import { PageContent } from "@/components/page-content"
+import { PageHeader } from "@/components/PageHeader"
+import { AUCTION_PHASES } from "@repo/shared"
 import { PhaseFiltersContainer, AuctionsContainer } from "@/features/auctions"
 import { getQueryClient } from "@/lib/query-client"
 import { getSearchParams } from "@/features/auctions/server/getSearchParams"
+import { Page } from "@/components/Page"
+import { PageContent } from "@/components/PageContent"
 
 export default async function AdminHomePage({
   searchParams,
@@ -17,12 +19,16 @@ export default async function AdminHomePage({
   await prefetchAuctions(queryClient, { phase })
 
   return (
-    <PageContent>
-      <h1 className="text-lg font-semibold">Auctions</h1>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <PhaseFiltersContainer />
-        <AuctionsContainer phase={phase} />
-      </HydrationBoundary>
-    </PageContent>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Page>
+        <PageHeader>
+          <h1 className="text-lg font-semibold">Auctions</h1>
+          <PhaseFiltersContainer items={[...AUCTION_PHASES]} />
+        </PageHeader>
+        <PageContent>
+          <AuctionsContainer phase={phase} />
+        </PageContent>
+      </Page>
+    </HydrationBoundary>
   )
 }

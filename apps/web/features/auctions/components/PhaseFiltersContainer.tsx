@@ -1,13 +1,18 @@
 "use client"
 
-import { AUCTION_PHASES } from "@repo/shared"
+import type { AuctionPhase } from "@repo/shared"
 import { useQuery } from "@tanstack/react-query"
 
 import { AUCTION_PHASE_LABEL } from "@/constants/auction.constant"
 import { getAuctionPhaseCountsQuery } from "@/features/auctions/data/queries"
 import { PhaseFilter } from "@/features/auctions/components/PhaseFilter"
 
-export const PhaseFiltersContainer = () => {
+type PhaseFiltersContainerProps = {
+  items: AuctionPhase[]
+}
+export const PhaseFiltersContainer = ({
+  items,
+}: PhaseFiltersContainerProps) => {
   const { data: counts } = useQuery(getAuctionPhaseCountsQuery())
 
   if (!counts) return null
@@ -17,21 +22,18 @@ export const PhaseFiltersContainer = () => {
       <PhaseFilter
         key="all"
         text="All"
-        count={AUCTION_PHASES.reduce(
-          (sum, phase) => sum + (counts[phase] ?? 0),
-          0
-        )}
+        count={items.reduce((sum, phase) => sum + (counts[phase] ?? 0), 0)}
       />
-      {AUCTION_PHASES.filter((phase) => counts[phase] !== undefined).map(
-        (phase) => (
+      {items
+        .filter((phase) => counts[phase] !== undefined)
+        .map((phase) => (
           <PhaseFilter
             key={phase}
             text={AUCTION_PHASE_LABEL[phase]}
             phase={phase}
             count={counts[phase] ?? 0}
           />
-        )
-      )}
+        ))}
     </nav>
   )
 }
