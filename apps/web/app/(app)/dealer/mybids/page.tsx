@@ -8,7 +8,7 @@ import {
   MyBidsContainer,
 } from "@/features/auctions"
 import { prefetchMyBids } from "@/features/auctions/server/prefetchMyBids"
-import { toMyBidsQueryParams } from "@/features/auctions/server/toMyBidsQueryParams"
+import { loadMyBidsSearchParams } from "@/features/auctions/searchParams"
 import { getQueryClient } from "@/lib/query-client"
 import type { SearchParams } from "@/types/next"
 
@@ -17,7 +17,7 @@ export default async function DealerMyBidsPage({
 }: {
   searchParams: SearchParams
 }) {
-  const queryParams = await toMyBidsQueryParams(searchParams)
+  const queryParams = await loadMyBidsSearchParams(searchParams)
   const queryClient = getQueryClient()
   await prefetchMyBids(queryClient, queryParams)
 

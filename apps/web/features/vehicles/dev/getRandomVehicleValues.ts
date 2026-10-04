@@ -1,6 +1,7 @@
+import { faker } from "@faker-js/faker"
+
 import type { VehicleFormValues } from "../lib/vehicleFormSchema"
 
-const VIN_CHARS = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789"
 const MODELS = [
   ["Tesla", "Model 3 Long Range"],
   ["Hyundai", "Ioniq 5"],
@@ -14,27 +15,29 @@ const MODELS = [
 const CITIES = ["Berlin", "Hamburg", "München", "Köln", "Frankfurt", "Leipzig"]
 const CONDITIONS = ["", "Good", "Very good", "Minor scratches on rear bumper"]
 
-export const int = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1)) + min
-const pick = <T>(items: T[]) => items[int(0, items.length - 1)]
-export const pad = (value: number) => String(value).padStart(2, "0")
-
 export function getRandomVehicleValues(): VehicleFormValues {
-  const [make, model] = pick(MODELS)
-  const year = int(2019, 2024)
+  const [make, model] = faker.helpers.arrayElement(MODELS)
+  const registrationDate = faker.date
+    .between({ from: "2019-01-01", to: "2024-12-31" })
+    .toISOString()
+    .slice(0, 10)
 
   return {
-    vin: Array.from({ length: 17 }, () => pick([...VIN_CHARS])).join(""),
+    vin: faker.vehicle.vin(),
     make,
     model,
-    year,
-    mileage: int(5, 120) * 1000,
-    registrationDate: `${year}-${pad(int(1, 12))}-${pad(int(1, 28))}`,
-    batteryCapacityKwh: int(500, 1000) / 10,
-    batterySohPercent: int(85, 99),
-    rangeKm: int(300, 550),
-    city: pick(CITIES),
+    year: Number(registrationDate.slice(0, 4)),
+    mileage: faker.number.int({ min: 5, max: 120 }) * 1000,
+    registrationDate,
+    batteryCapacityKwh: faker.number.float({
+      min: 50,
+      max: 100,
+      fractionDigits: 1,
+    }),
+    batterySohPercent: faker.number.int({ min: 85, max: 99 }),
+    rangeKm: faker.number.int({ min: 300, max: 550 }),
+    city: faker.helpers.arrayElement(CITIES),
     country: "DE",
-    condition: pick(CONDITIONS),
+    condition: faker.helpers.arrayElement(CONDITIONS),
   }
 }

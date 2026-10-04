@@ -1,4 +1,5 @@
 import { Geist_Mono, Inter } from "next/font/google"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 import "./globals.css"
 import { QueryProvider } from "@/providers/QueryProvider"
@@ -30,7 +31,9 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <NuqsAdapter>
+            <QueryProvider>{children}</QueryProvider>
+          </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>

@@ -1,4 +1,5 @@
 import type { AuctionDetailAdmin } from "@repo/shared"
+import { maxBy } from "es-toolkit"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import { Card, CardContent } from "@/components/ui/card"
@@ -11,8 +12,7 @@ export const AuctionSideCardAdmin = ({
 }: {
   auction: AuctionDetailAdmin
 }) => {
-  const highestBid =
-    auction.bids.toSorted((a, b) => b.amount - a.amount)[0] ?? null
+  const highestBid = maxBy(auction.bids, (bid) => bid.amount) ?? null
 
   return (
     <Card className="lg:sticky lg:top-18">

@@ -19,7 +19,7 @@ export const vehicleFormSchema = z.object({
     .min(2000, "Must be 2000 or later.")
     .max(new Date().getFullYear() + 1, "Can't be that far in the future."),
   mileage: wholeNumber.min(0, "Can't be negative."),
-  registrationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date."),
+  registrationDate: z.iso.date("Pick a date."),
   batteryCapacityKwh: number.positive("Must be more than 0."),
   batterySohPercent: number
     .min(0, "Must be between 0 and 100.")

@@ -5,9 +5,6 @@ import type {
   BidStatus,
 } from "@repo/shared"
 
-/** Query param the auction lists are filtered by, e.g. `/admin?phase=LIVE`. */
-export const PHASE_QUERY_PARAM = "phase"
-
 export const AUCTION_PHASE_LABEL: Record<AuctionPhase, string> = {
   SCHEDULED: "Scheduled",
   LIVE: "Live",

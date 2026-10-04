@@ -12,12 +12,12 @@ import {
   type BidStatus,
   type BidStatusCounts,
   DEALER_AUCTION_EXCLUDED_FIELDS,
-  type DealerAuctionExcludedField,
   DEALER_AUCTION_PHASES,
   type DealerAuctionPhase,
   type JwtPayload,
   type UserRole,
 } from '@repo/shared'
+import { countBy, groupBy, maxBy, omit } from 'es-toolkit'
 import {
   type FindOptionsSelect,
   type FindOptionsWhere,
@@ -69,27 +69,25 @@ export class AuctionsService {
         ...(viewer.role === 'DEALER' && { dealerId: viewer.sub }),
       },
     })
-    const amountsOf = (auctionId: string) =>
-      bids.filter((bid) => bid.auctionId === auctionId).map((bid) => bid.amount)
+    const bidsByAuction = groupBy(bids, (bid) => bid.auctionId)
 
     if (viewer.role === 'ADMIN') {
       return auctions.map((auction) => {
-        const amounts = amountsOf(auction.id)
+        const auctionBids = bidsByAuction[auction.id] ?? []
         return {
           ...auction,
-          bidCount: amounts.length,
-          maxBidAmount: amounts.length ? Math.max(...amounts) : null,
+          bidCount: auctionBids.length,
+          maxBidAmount: maxBy(auctionBids, (bid) => bid.amount)?.amount ?? null,
         }
       })
     }
 
-    return auctions.map((auction) => {
-      const amounts = amountsOf(auction.id)
-      return {
-        ...auction,
-        myBidAmount: amounts.length ? Math.max(...amounts) : null,
-      }
-    })
+    return auctions.map((auction) => ({
+      ...auction,
+      myBidAmount:
+        maxBy(bidsByAuction[auction.id] ?? [], (bid) => bid.amount)?.amount ??
+        null,
+    }))
   }
 
   /** The full auction: admins get every bid, dealers their own highest one. */
@@ -131,11 +129,10 @@ export class AuctionsService {
 
   async countMyBids(dealerId: string): Promise<BidStatusCounts> {
     const myBids = await this.loadMyBids(dealerId)
-    const counts = Object.fromEntries(
-      BID_STATUSES.map((status) => [status, 0]),
+    const counts = countBy(myBids, ({ bidStatus }) => bidStatus)
+    return Object.fromEntries(
+      BID_STATUSES.map((status) => [status, counts[status] ?? 0]),
     ) as BidStatusCounts
-    for (const { bidStatus } of myBids) counts[bidStatus] += 1
-    return counts
   }
 
   private async loadMyBids(dealerId: string) {
@@ -146,7 +143,7 @@ export class AuctionsService {
     })
 
     return auctions.map(({ winningBid, bids, ...auction }) => ({
-      ...omitDealerHidden(auction),
+      ...omit(auction, DEALER_AUCTION_EXCLUDED_FIELDS),
       myBidAmount: Math.max(...bids.map((bid) => bid.amount)),
       bidStatus: getBidStatus(auction, winningBid?.dealerId === dealerId),
     }))
@@ -195,12 +192,6 @@ export class AuctionsService {
         .map((name) => [name, true]),
     )
   }
-}
-
-function omitDealerHidden(auction: Omit<Auction, 'winningBid' | 'bids'>) {
-  return Object.fromEntries(
-    Object.entries(auction).filter(([key]) => !DEALER_HIDDEN.has(key)),
-  ) as Omit<typeof auction, DealerAuctionExcludedField>
 }
 
 function getBidStatus(

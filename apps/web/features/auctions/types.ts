@@ -1,21 +1,18 @@
-import {
-  AUCTION_PHASES,
-  type AuctionDetailAdmin,
-  type AuctionDetailDealer,
-  type AuctionSummaryAdmin,
-  type AuctionSummaryDealer,
-  type BidStatus,
+import type {
+  AuctionDetailAdmin,
+  AuctionDetailDealer,
+  AuctionSummaryAdmin,
+  AuctionSummaryDealer,
 } from "@repo/shared"
+import type { inferParserType } from "nuqs/server"
 
-export type AuctionsQueryParams = {
-  phase?: (typeof AUCTION_PHASES)[number]
-}
+import type { auctionsSearchParams, myBidsSearchParams } from "./searchParams"
+
+export type AuctionsQueryParams = inferParserType<typeof auctionsSearchParams>
 
 /** An item of GET /auctions; which shape it is depends on the caller's role. */
 export type AuctionSummary = AuctionSummaryAdmin | AuctionSummaryDealer
 
 export type AuctionDetail = AuctionDetailAdmin | AuctionDetailDealer
 
-export type MyBidsQueryParams = {
-  phase?: BidStatus
-}
+export type MyBidsQueryParams = inferParserType<typeof myBidsSearchParams>

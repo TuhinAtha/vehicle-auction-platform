@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/PageHeader"
 import { AUCTION_PHASES } from "@repo/shared"
 import { PhaseFiltersContainer, AuctionsContainer } from "@/features/auctions"
 import { getQueryClient } from "@/lib/query-client"
-import { toQueryParams } from "@/features/auctions/server/toQueryParams"
+import { loadAuctionsSearchParams } from "@/features/auctions/searchParams"
 import { Page } from "@/components/Page"
 import { PageContent } from "@/components/PageContent"
 import { buttonVariants } from "@/components/ui/button"
@@ -16,7 +16,7 @@ export default async function AdminAuctionsPage({
 }: {
   searchParams: SearchParams
 }) {
-  const queryParams = await toQueryParams(searchParams)
+  const queryParams = await loadAuctionsSearchParams(searchParams)
   const queryClient = getQueryClient()
   await prefetchAuctions(queryClient, queryParams)
 

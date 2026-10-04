@@ -2,6 +2,7 @@
 
 import type { AuctionPhase } from "@repo/shared"
 import { useQuery } from "@tanstack/react-query"
+import { sumBy } from "es-toolkit"
 
 import { AUCTION_PHASE_LABEL } from "@/constants/auction.constant"
 import { getAuctionPhaseCountsQuery } from "@/features/auctions/data/queries"
@@ -22,7 +23,7 @@ export const PhaseFiltersContainer = ({
       <PhaseFilter
         key="all"
         text="All"
-        count={items.reduce((sum, phase) => sum + (counts[phase] ?? 0), 0)}
+        count={sumBy(items, (phase) => counts[phase] ?? 0)}
       />
       {items
         .filter((phase) => counts[phase] !== undefined)

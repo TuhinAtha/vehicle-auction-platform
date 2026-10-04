@@ -1,8 +1,7 @@
 "use client"
 
+import prettyMilliseconds from "pretty-ms"
 import { useEffect, useState } from "react"
-
-import { formatCountdown } from "@/lib/countdown"
 
 export const Countdown = ({ to, title }: { to: string; title?: string }) => {
   const [now, setNow] = useState(() => Date.now())
@@ -12,10 +11,17 @@ export const Countdown = ({ to, title }: { to: string; title?: string }) => {
     return () => clearInterval(id)
   }, [])
 
+  const remaining = new Date(to).getTime() - now
+
   // The server and the browser render this a moment apart, so the text can differ.
   return (
     <time dateTime={to} title={title} suppressHydrationWarning>
-      {formatCountdown(to, now)}
+      {remaining < 1000
+        ? "0s"
+        : prettyMilliseconds(remaining, {
+            unitCount: 2,
+            secondsDecimalDigits: 0,
+          })}
     </time>
   )
 }

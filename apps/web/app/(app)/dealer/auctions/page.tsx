@@ -5,7 +5,7 @@ import { DEALER_AUCTION_PHASES } from "@repo/shared"
 import { Page } from "@/components/Page"
 import { PhaseFiltersContainer, AuctionsContainer } from "@/features/auctions"
 import { getQueryClient } from "@/lib/query-client"
-import { toQueryParams } from "@/features/auctions/server/toQueryParams"
+import { loadAuctionsSearchParams } from "@/features/auctions/searchParams"
 import { PageHeader } from "@/components/PageHeader"
 import { PageContent } from "@/components/PageContent"
 
@@ -14,7 +14,7 @@ export default async function DealerAuctionsPage({
 }: {
   searchParams: SearchParams
 }) {
-  const queryParams = await toQueryParams(searchParams)
+  const queryParams = await loadAuctionsSearchParams(searchParams)
   const queryClient = getQueryClient()
   await prefetchAuctions(queryClient, queryParams)
 

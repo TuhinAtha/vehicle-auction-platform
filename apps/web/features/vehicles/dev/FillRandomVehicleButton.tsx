@@ -4,7 +4,6 @@ import { useFormContext } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import type { VehicleFormValues } from "../lib/vehicleFormSchema"
-import { getRandomVehicleValues } from "./getRandomVehicleValues"
 
 export const FillRandomVehicleButton = () => {
   const { getValues, reset } = useFormContext<VehicleFormValues>()
@@ -16,7 +15,11 @@ export const FillRandomVehicleButton = () => {
       type="button"
       variant="ghost"
       className="mr-auto"
-      onClick={() => reset({ ...getValues(), ...getRandomVehicleValues() })}
+      onClick={async () => {
+        const { getRandomVehicleValues } =
+          await import("./getRandomVehicleValues")
+        reset({ ...getValues(), ...getRandomVehicleValues() })
+      }}
     >
       Fill with random data
     </Button>

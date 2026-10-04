@@ -2,6 +2,7 @@
 
 import { BID_STATUSES } from "@repo/shared"
 import { useQuery } from "@tanstack/react-query"
+import { sumBy } from "es-toolkit"
 
 import { BID_STATUS_BADGE } from "@/constants/auction.constant"
 import { getBidStatusCountsQuery } from "../data/queries"
@@ -16,7 +17,7 @@ export const MyBidPhaseFiltersContainer = () => {
     <nav aria-label="Bid status" className="flex flex-wrap gap-2">
       <PhaseFilter
         text="All"
-        count={BID_STATUSES.reduce((sum, status) => sum + counts[status], 0)}
+        count={sumBy(BID_STATUSES, (status) => counts[status])}
       />
       {BID_STATUSES.map((status) => (
         <PhaseFilter
