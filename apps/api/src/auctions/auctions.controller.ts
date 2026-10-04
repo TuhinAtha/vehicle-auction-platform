@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common'
 import type { JwtPayload } from '@repo/shared'
-import { CurrentUser } from '../auth/decorators.js'
+import { CurrentUser, Role } from '../auth/decorators.js'
 import { AuctionsService } from './auctions.service.js'
 import { CreateAuctionDto } from './dto/create-auction.dto.js'
 import { ListAuctionsQueryDto } from './dto/list-auctions-query.dto.js'
@@ -20,6 +20,7 @@ export class AuctionsController {
   constructor(private readonly auctionsService: AuctionsService) {}
 
   @Post()
+  @Role('ADMIN')
   create(@Body() createAuctionDto: CreateAuctionDto) {
     return this.auctionsService.create(createAuctionDto)
   }

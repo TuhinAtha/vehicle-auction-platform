@@ -8,6 +8,8 @@ import { getQueryClient } from "@/lib/query-client"
 import { toQueryParams } from "@/features/auctions/server/toQueryParams"
 import { Page } from "@/components/Page"
 import { PageContent } from "@/components/PageContent"
+import { buttonVariants } from "@/components/ui/button"
+import Link from "next/link"
 
 export default async function AdminAuctionsPage({
   searchParams,
@@ -22,7 +24,12 @@ export default async function AdminAuctionsPage({
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Page>
         <PageHeader>
-          <h1 className="text-lg font-semibold">Auctions</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-lg font-semibold">Auctions</h1>
+            <Link href="/admin/auctions/post" className={buttonVariants()}>
+              New auction
+            </Link>
+          </div>
           <PhaseFiltersContainer items={[...AUCTION_PHASES]} />
         </PageHeader>
         <PageContent>

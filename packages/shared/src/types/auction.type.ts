@@ -23,5 +23,10 @@ export type DealerAuctionExcludedField =
 
 export type CreateAuctionInput = Pick<
   Auction,
-  'vehicleId' | 'startsAt' | 'endsAt' | 'reservePrice' | 'minIncrement'
+  | 'vehicleId'
+  | 'startsAt'
+  | 'endsAt'
+  | 'startingPrice'
+  | 'reservePrice'
+  | 'minIncrement'
 >
