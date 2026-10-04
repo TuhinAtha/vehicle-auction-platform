@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -80,9 +80,14 @@ export const AuctionCardDealer = ({
                 </LabeledValue>
               </dl>
             )}
-            <Button size="lg" className="col-start-3 justify-self-end">
+            <span
+              className={buttonVariants({
+                size: "lg",
+                className: "col-start-3 justify-self-end",
+              })}
+            >
               {myBidAmount === null ? "Bid now" : "Raise bid"}
-            </Button>
+            </span>
           </div>
         ) : (
           <dl>

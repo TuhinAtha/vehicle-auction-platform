@@ -1,5 +1,6 @@
 "use client"
 
+import { AuctionResultBadge } from "./AuctionResultBadge"
 import { AuctionStatusBadge } from "./AuctionStatusBadge"
 import { price } from "@/lib/price"
 import { AuctionSummaryAdmin } from "@repo/shared"
@@ -28,7 +29,11 @@ export const AuctionCardAdmin = ({
     <Card className="h-full cursor-pointer transition-shadow hover:shadow-md hover:ring-foreground/20">
       <CardHeader>
         <CardAction className="flex items-center gap-2">
-          <AuctionStatusBadge status={auction.status} />
+          {auction.status === "ENDED" ? (
+            <AuctionResultBadge result={auction.result} />
+          ) : (
+            <AuctionStatusBadge status={auction.status} />
+          )}
         </CardAction>
         <CardTitle className="truncate">
           {vehicle.make} {vehicle.model}

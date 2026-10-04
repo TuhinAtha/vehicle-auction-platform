@@ -1,3 +1,5 @@
+import type { User } from './user.interface'
+
 export interface Bid {
   id: string
   auctionId: string
@@ -6,4 +8,8 @@ export interface Bid {
   amount: number
   /** When the bid was placed */
   createdAt: string
+}
+
+export interface BidWithDealer extends Bid {
+  dealer: User
 }

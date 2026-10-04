@@ -3,7 +3,7 @@ import type {
   AuctionStatus,
   DealerAuctionExcludedField,
 } from '../types/auction.type'
-import type { Bid } from './bid.interface'
+import type { Bid, BidWithDealer } from './bid.interface'
 import type { Vehicle } from './vehicle.interface'
 
 export interface Auction {
@@ -29,7 +29,7 @@ export interface Auction {
 /** GET /auctions/:id as an admin. */
 export interface AuctionDetailAdmin extends Auction {
   vehicle: Vehicle
-  bids: Bid[]
+  bids: BidWithDealer[]
 }
 
 /** GET /auctions/:id as a dealer: the excluded fields stay hidden. */

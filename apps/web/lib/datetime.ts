@@ -12,3 +12,9 @@ export const shortDatetime = new Intl.DateTimeFormat("en-GB", {
   minute: "2-digit",
   timeZone: "Europe/Berlin",
 })
+
+export const monthYear = new Intl.DateTimeFormat("en-GB", {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+})

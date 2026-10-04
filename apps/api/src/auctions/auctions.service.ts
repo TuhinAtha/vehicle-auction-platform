@@ -84,7 +84,7 @@ export class AuctionsService {
     const auction = await this.auctions.findOne({
       select: this.selectFor(viewer.role),
       where: { id },
-      relations: { vehicle: true, bids: isAdmin },
+      relations: { vehicle: true, bids: isAdmin ? { dealer: true } : false },
       order: isAdmin ? { bids: { createdAt: 'DESC' } } : undefined,
     })
     if (!auction) throw new NotFoundException(`Auction ${id} not found`)

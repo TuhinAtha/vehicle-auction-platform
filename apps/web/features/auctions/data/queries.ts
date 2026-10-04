@@ -1,6 +1,10 @@
 import type { AuctionPhaseCounts } from "@repo/shared"
 import { queryOptions } from "@tanstack/react-query"
-import type { AuctionsQueryParams, AuctionSummary } from "../types"
+import type {
+  AuctionDetail,
+  AuctionsQueryParams,
+  AuctionSummary,
+} from "../types"
 
 import { fetchBff } from "@/lib/fetch-bff"
 import { AUCTION_ENDPOINTS } from "./endpoints"
@@ -25,4 +29,11 @@ export const getAuctionPhaseCountsQuery = () =>
     queryKey: AUCTION_QUERY_KEYS.counts(),
     queryFn: ({ signal }) =>
       fetchBff<AuctionPhaseCounts>(AUCTION_ENDPOINTS.counts, { signal }),
+  })
+
+export const getAuctionQuery = (id: string) =>
+  queryOptions({
+    queryKey: AUCTION_QUERY_KEYS.detail(id),
+    queryFn: ({ signal }) =>
+      fetchBff<AuctionDetail>(AUCTION_ENDPOINTS.detail(id), { signal }),
   })

@@ -1,4 +1,6 @@
 import type { AuctionSummaryAdmin, AuctionSummaryDealer } from "@repo/shared"
+import Link from "next/link"
+
 import { useUser } from "@/providers/UserProvider"
 import type { AuctionSummary } from "../types"
 import { AuctionCardAdmin } from "./AuctionCardAdmin"
@@ -24,9 +26,13 @@ export const AuctionCardGrid = ({
       {auctions.map((auction) => (
         <li key={auction.id}>
           {role === "DEALER" ? (
-            <AuctionCardDealer auction={auction as AuctionSummaryDealer} />
+            <Link href={`/dealer/auctions/${auction.id}`}>
+              <AuctionCardDealer auction={auction as AuctionSummaryDealer} />
+            </Link>
           ) : (
-            <AuctionCardAdmin auction={auction as AuctionSummaryAdmin} />
+            <Link href={`/admin/auctions/${auction.id}`}>
+              <AuctionCardAdmin auction={auction as AuctionSummaryAdmin} />
+            </Link>
           )}
         </li>
       ))}
