@@ -1,4 +1,9 @@
-import type { Auction, CreateAuctionInput } from "@repo/shared"
+import type {
+  Auction,
+  Bid,
+  CreateAuctionInput,
+  CreateBidInput,
+} from "@repo/shared"
 
 import { fetchBff } from "@/lib/fetch-bff"
 import {
@@ -18,5 +23,12 @@ export function createAuction(vehicleId: string, values: AuctionFormValues) {
       startsAt: new Date(auction.startsAt).toISOString(),
       endsAt: new Date(auction.endsAt).toISOString(),
     } satisfies CreateAuctionInput,
+  })
+}
+
+export function placeBid(auctionId: string, amount: number) {
+  return fetchBff<Bid>(AUCTION_ENDPOINTS.bids(auctionId), {
+    method: "POST",
+    body: { amount } satisfies CreateBidInput,
   })
 }

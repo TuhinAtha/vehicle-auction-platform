@@ -1,3 +1,3 @@
 import type { Bid } from '../interfaces/bid.interface'
 
-export type CreateBidInput = Pick<Bid, 'dealerId' | 'amount'>
+export type CreateBidInput = Pick<Bid, 'amount'>

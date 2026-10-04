@@ -1,9 +1,7 @@
 import { z } from "zod"
 
 import { vehicleFormSchema } from "@/features/vehicles/lib/vehicleFormSchema"
-
-const wholeNumber = z.number("Enter a number.").int("Enter a whole number.")
-const euros = wholeNumber.min(0, "Can't be negative.")
+import { euros, wholeNumber } from "@/lib/validation"
 
 export const auctionFormSchema = z.object({
   startsAt: z.string().min(1, "Pick a start time."),
