@@ -1,4 +1,4 @@
-import type { VehicleFormValues } from "./vehicleFormSchema"
+import type { VehicleFormValues } from "../lib/vehicleFormSchema"
 
 const VIN_CHARS = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789"
 const MODELS = [

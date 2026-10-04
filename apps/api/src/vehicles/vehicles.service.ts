@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { Auction } from '../auctions/entities/auction.entity.js'
 import { isPgError, PgErrorCode } from '../common/utils/pg.util.js'
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js'
 import { UpdateVehicleDto } from './dto/update-vehicle.dto.js'
@@ -23,6 +24,25 @@ export class VehiclesService {
 
   findAll() {
     return this.vehicles.find({ order: { createdAt: 'DESC' } })
+  }
+
+  findAvailable(limit?: number) {
+    return this.vehicles
+      .createQueryBuilder('vehicle')
+      .where((qb) => {
+        const activeAuction = qb
+          .subQuery()
+          .select('1')
+          .from(Auction, 'auction')
+          .where('auction.vehicleId = vehicle.id')
+          .andWhere('auction.status IN (:...statuses)')
+          .getQuery()
+        return `NOT EXISTS ${activeAuction}`
+      })
+      .setParameter('statuses', ['SCHEDULED', 'LIVE'])
+      .orderBy('vehicle.createdAt', 'DESC')
+      .take(limit)
+      .getMany()
   }
 
   async findOne(id: string) {

@@ -1,0 +1,1 @@
+export const RECENT_VEHICLES_LIMIT = 3

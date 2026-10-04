@@ -1,17 +1,27 @@
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
+
 import { Page } from "@/components/Page"
 import { PageContent } from "@/components/PageContent"
 import { PageHeader } from "@/components/PageHeader"
 import { CreateAuctionForm } from "@/features/auctions"
+import { RECENT_VEHICLES_LIMIT } from "@/features/vehicles/data/constants"
+import { prefetchAvailableVehicles } from "@/features/vehicles/server/prefetchAvailableVehicles"
+import { getQueryClient } from "@/lib/query-client"
 
-export default function NewAuctionPage() {
+export default async function NewAuctionPage() {
+  const queryClient = getQueryClient()
+  await prefetchAvailableVehicles(queryClient, RECENT_VEHICLES_LIMIT)
+
   return (
-    <Page>
-      <PageHeader>
-        <h1 className="text-lg font-semibold">New auction</h1>
-      </PageHeader>
-      <PageContent>
-        <CreateAuctionForm />
-      </PageContent>
-    </Page>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Page>
+        <PageHeader>
+          <h1 className="text-lg font-semibold">New auction</h1>
+        </PageHeader>
+        <PageContent>
+          <CreateAuctionForm />
+        </PageContent>
+      </Page>
+    </HydrationBoundary>
   )
 }

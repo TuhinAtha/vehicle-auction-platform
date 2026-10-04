@@ -11,3 +11,13 @@ export const getVehiclesQuery = () =>
     queryFn: ({ signal }) =>
       fetchBff<Vehicle[]>(VEHICLE_ENDPOINTS.root, { signal }),
   })
+
+export const getAvailableVehiclesQuery = (limit?: number) =>
+  queryOptions({
+    queryKey: VEHICLE_QUERY_KEYS.available(limit),
+    queryFn: ({ signal }) =>
+      fetchBff<Vehicle[]>(VEHICLE_ENDPOINTS.available, {
+        queryParams: { limit },
+        signal,
+      }),
+  })

@@ -7,11 +7,12 @@ import { FormProvider } from "react-hook-form"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ApiError } from "@/lib/http"
 import { createVehicle } from "../data/mutations"
 import { VEHICLE_QUERY_KEYS } from "../data/queryKeys"
+import { FillRandomVehicleButton } from "../dev/FillRandomVehicleButton"
 import { useVehicleForm } from "../hooks/useVehicleForm"
-import { getRandomVehicleValues } from "../lib/getRandomVehicleValues"
 import type { VehicleFormValues } from "../lib/vehicleFormSchema"
 import { VehicleFields } from "./VehicleFields"
 
@@ -23,7 +24,6 @@ export const CreateVehicleForm = () => {
   const form = useVehicleForm()
   const {
     handleSubmit,
-    reset,
     setError,
     formState: { errors, isSubmitting },
   } = form
@@ -52,7 +52,14 @@ export const CreateVehicleForm = () => {
         noValidate
         className="flex max-w-3xl flex-col gap-4"
       >
-        <VehicleFields />
+        <Card>
+          <CardHeader>
+            <CardTitle>Vehicle</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <VehicleFields />
+          </CardContent>
+        </Card>
 
         {errors.root && (
           <Alert variant="destructive">
@@ -61,16 +68,7 @@ export const CreateVehicleForm = () => {
         )}
 
         <div className="flex justify-end gap-2">
-          {process.env.NODE_ENV === "development" && (
-            <Button
-              type="button"
-              variant="ghost"
-              className="mr-auto"
-              onClick={() => reset(getRandomVehicleValues())}
-            >
-              Fill with random data
-            </Button>
-          )}
+          <FillRandomVehicleButton />
           <Link
             href={VEHICLES_PATH}
             className={buttonVariants({ variant: "outline" })}

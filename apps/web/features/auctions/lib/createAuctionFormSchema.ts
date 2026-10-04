@@ -13,8 +13,19 @@ export const auctionFormSchema = z.object({
   minIncrement: wholeNumber.min(1, "Must be at least 1."),
 })
 
-export const createAuctionFormSchema = vehicleFormSchema
+const withRecentVehicle = auctionFormSchema.extend({
+  vehicleSource: z.literal("recent"),
+  vehicleId: z.string("Select a vehicle.").min(1, "Select a vehicle."),
+})
+
+const withNewVehicle = vehicleFormSchema
   .extend(auctionFormSchema.shape)
+  .extend({
+    vehicleSource: z.literal("new"),
+  })
+
+export const createAuctionFormSchema = z
+  .discriminatedUnion("vehicleSource", [withRecentVehicle, withNewVehicle])
   .refine((values) => new Date(values.endsAt) > new Date(values.startsAt), {
     path: ["endsAt"],
     message: "Must be after the start.",

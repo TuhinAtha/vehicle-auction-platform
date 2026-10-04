@@ -8,7 +8,9 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common'
 import { Role } from '../auth/decorators.js'
 import { VehiclesService } from './vehicles.service.js'
@@ -29,6 +31,14 @@ export class VehiclesController {
   @Role('ADMIN')
   findAll() {
     return this.vehiclesService.findAll()
+  }
+
+  @Get('available')
+  @Role('ADMIN')
+  findAvailable(
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
+  ) {
+    return this.vehiclesService.findAvailable(limit)
   }
 
   @Get(':id')

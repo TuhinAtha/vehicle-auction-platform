@@ -1,15 +1,11 @@
-import {
-  int,
-  pad,
-  getRandomVehicleValues,
-} from "@/features/vehicles/lib/getRandomVehicleValues"
-import type { CreateAuctionFormValues } from "./createAuctionFormSchema"
+import { int, pad } from "@/features/vehicles/dev/getRandomVehicleValues"
+import type { AuctionFormValues } from "../lib/createAuctionFormSchema"
 
 const toDatetimeLocal = (date: Date) =>
   `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}` +
   `T${pad(date.getHours())}:${pad(date.getMinutes())}`
 
-export function getRandomAuctionValues(): CreateAuctionFormValues {
+export function getRandomAuctionValues(): AuctionFormValues {
   const startingPrice = int(30, 90) * 500
 
   const startsAt = new Date()
@@ -18,7 +14,6 @@ export function getRandomAuctionValues(): CreateAuctionFormValues {
   endsAt.setHours(endsAt.getHours() + int(6, 72))
 
   return {
-    ...getRandomVehicleValues(),
     startsAt: toDatetimeLocal(startsAt),
     endsAt: toDatetimeLocal(endsAt),
     startingPrice,

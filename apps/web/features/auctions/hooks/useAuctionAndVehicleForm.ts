@@ -12,6 +12,8 @@ export const useAuctionAndVehicleForm = () => {
   return useForm<CreateAuctionFormValues>({
     resolver: zodResolver(createAuctionFormSchema),
     defaultValues: {
+      vehicleSource: "recent",
+      vehicleId: "",
       ...defaultVehicleValues,
       ...defaultAuctionValues,
     },
