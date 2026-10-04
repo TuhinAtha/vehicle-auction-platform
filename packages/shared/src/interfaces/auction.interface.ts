@@ -3,6 +3,7 @@ import type {
   AuctionStatus,
   DealerAuctionExcludedField,
 } from '../types/auction.type'
+import type { BidStatus } from '../types/bid.type'
 import type { Bid, BidWithDealer } from './bid.interface'
 import type { Vehicle } from './vehicle.interface'
 
@@ -58,4 +59,13 @@ export interface AuctionSummaryDealer extends Omit<
   vehicle: Vehicle
   /** The dealer's own highest bid amount, if any */
   myBidAmount: number | null
+}
+
+export interface AuctionSummaryMyBid extends Omit<
+  Auction,
+  DealerAuctionExcludedField
+> {
+  vehicle: Vehicle
+  myBidAmount: number
+  bidStatus: BidStatus
 }

@@ -4,6 +4,7 @@ import {
   type AuctionDetailDealer,
   type AuctionSummaryAdmin,
   type AuctionSummaryDealer,
+  type BidStatus,
 } from "@repo/shared"
 
 export type AuctionsQueryParams = {
@@ -14,3 +15,7 @@ export type AuctionsQueryParams = {
 export type AuctionSummary = AuctionSummaryAdmin | AuctionSummaryDealer
 
 export type AuctionDetail = AuctionDetailAdmin | AuctionDetailDealer
+
+export type MyBidsQueryParams = {
+  phase?: BidStatus
+}

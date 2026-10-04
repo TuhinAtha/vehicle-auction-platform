@@ -1,6 +1,5 @@
 "use client"
 import { useMemo } from "react"
-import type { AuctionPhase } from "@repo/shared"
 import { cn } from "cn"
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
@@ -16,7 +15,7 @@ export const PhaseFilter = ({
   count,
 }: {
   text: string
-  phase?: AuctionPhase
+  phase?: string
   count: number
 }) => {
   const pathname = usePathname()

@@ -2,11 +2,9 @@ import "server-only"
 
 import type { AuthUser } from "@repo/shared"
 import { cookies } from "next/headers"
-import { cache } from "react"
 
 import { AUTH_COOKIE } from "@/constants/auth.constant"
 
-import { fetchApi } from "@/lib/fetch-api"
 import { decodeJwtPayload } from "@/lib/jwt"
 import { readSession } from "@/lib/proxy/session"
 
@@ -15,14 +13,6 @@ export function tokenMaxAge(token: string) {
   const exp = decodeJwtPayload(token)?.exp
   return exp ? Math.max(0, exp - Math.floor(Date.now() / 1000)) : undefined
 }
-
-/**
- * The logged-in user's profile, or null if there's no valid session.
- * Cached so repeated calls in one request hit the API once.
- */
-export const getProfile = cache((): Promise<AuthUser | null> =>
-  fetchApi<AuthUser>("/auth/profile").catch(() => null)
-)
 
 /**
  * The logged-in user as stated in the session cookie, or null without a session.

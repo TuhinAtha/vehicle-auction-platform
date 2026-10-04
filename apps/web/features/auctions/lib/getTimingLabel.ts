@@ -26,8 +26,3 @@ export function getTiming({ status, startsAt, endsAt }: Timing) {
       }
   }
 }
-
-export function getTimingLabel(auction: Timing) {
-  const { label, date } = getTiming(auction)
-  return `${label} ${date}`
-}

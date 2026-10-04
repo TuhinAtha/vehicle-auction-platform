@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   ParseUUIDPipe,
   Query,
@@ -13,7 +12,7 @@ import { CurrentUser, Role } from '../auth/decorators.js'
 import { AuctionsService } from './auctions.service.js'
 import { CreateAuctionDto } from './dto/create-auction.dto.js'
 import { ListAuctionsQueryDto } from './dto/list-auctions-query.dto.js'
-import { UpdateAuctionDto } from './dto/update-auction.dto.js'
+import { ListMyBidsQueryDto } from './dto/list-my-bids-query.dto.js'
 
 @Controller('auctions')
 export class AuctionsController {
@@ -38,19 +37,26 @@ export class AuctionsController {
     return this.auctionsService.countByPhase(user.role)
   }
 
+  @Get('my-bids')
+  @Role('DEALER')
+  findMyBids(
+    @Query() { phase }: ListMyBidsQueryDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.auctionsService.findMyBids(user.sub, phase)
+  }
+
+  @Get('my-bids/counts')
+  @Role('DEALER')
+  countMyBids(@CurrentUser() user: JwtPayload) {
+    return this.auctionsService.countMyBids(user.sub)
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() user: JwtPayload,
   ) {
     return this.auctionsService.findOneFor(id, user)
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateAuctionDto: UpdateAuctionDto,
-  ) {
-    return this.auctionsService.update(id, updateAuctionDto)
   }
 }

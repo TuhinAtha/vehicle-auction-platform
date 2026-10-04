@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
@@ -9,7 +8,11 @@ import {
   AUCTION_PHASES,
   type AuctionPhase,
   type AuctionPhaseCounts,
+  BID_STATUSES,
+  type BidStatus,
+  type BidStatusCounts,
   DEALER_AUCTION_EXCLUDED_FIELDS,
+  type DealerAuctionExcludedField,
   DEALER_AUCTION_PHASES,
   type DealerAuctionPhase,
   type JwtPayload,
@@ -26,7 +29,6 @@ import {
 import { Bid } from '../bids/entities/bid.entity.js'
 import { VehiclesService } from '../vehicles/vehicles.service.js'
 import { CreateAuctionDto } from './dto/create-auction.dto.js'
-import { UpdateAuctionDto } from './dto/update-auction.dto.js'
 import { Auction } from './entities/auction.entity.js'
 
 const DEALER_HIDDEN = new Set<string>(DEALER_AUCTION_EXCLUDED_FIELDS)
@@ -60,22 +62,34 @@ export class AuctionsService {
       relations: { vehicle: true },
       order: { startsAt: 'ASC' },
     })
-    const auctionIds = auctions.map(({ id }) => id)
+
+    const bids = await this.auctions.manager.find(Bid, {
+      where: {
+        auctionId: In(auctions.map(({ id }) => id)),
+        ...(viewer.role === 'DEALER' && { dealerId: viewer.sub }),
+      },
+    })
+    const amountsOf = (auctionId: string) =>
+      bids.filter((bid) => bid.auctionId === auctionId).map((bid) => bid.amount)
 
     if (viewer.role === 'ADMIN') {
-      const bids = await this.summariseBids(auctionIds)
-      return auctions.map((auction) => ({
-        ...auction,
-        bidCount: bids.get(auction.id)?.count ?? 0,
-        maxBidAmount: bids.get(auction.id)?.max ?? null,
-      }))
+      return auctions.map((auction) => {
+        const amounts = amountsOf(auction.id)
+        return {
+          ...auction,
+          bidCount: amounts.length,
+          maxBidAmount: amounts.length ? Math.max(...amounts) : null,
+        }
+      })
     }
 
-    const ownBids = await this.summariseBids(auctionIds, viewer.sub)
-    return auctions.map((auction) => ({
-      ...auction,
-      myBidAmount: ownBids.get(auction.id)?.max ?? null,
-    }))
+    return auctions.map((auction) => {
+      const amounts = amountsOf(auction.id)
+      return {
+        ...auction,
+        myBidAmount: amounts.length ? Math.max(...amounts) : null,
+      }
+    })
   }
 
   /** The full auction: admins get every bid, dealers their own highest one. */
@@ -108,6 +122,36 @@ export class AuctionsService {
     return Object.fromEntries(phases.map((phase, i) => [phase, counts[i]]))
   }
 
+  async findMyBids(dealerId: string, phase?: BidStatus) {
+    const myBids = await this.loadMyBids(dealerId)
+    return phase
+      ? myBids.filter(({ bidStatus }) => bidStatus === phase)
+      : myBids
+  }
+
+  async countMyBids(dealerId: string): Promise<BidStatusCounts> {
+    const myBids = await this.loadMyBids(dealerId)
+    const counts = Object.fromEntries(
+      BID_STATUSES.map((status) => [status, 0]),
+    ) as BidStatusCounts
+    for (const { bidStatus } of myBids) counts[bidStatus] += 1
+    return counts
+  }
+
+  private async loadMyBids(dealerId: string) {
+    const auctions = await this.auctions.find({
+      where: { bids: { dealerId } },
+      relations: { vehicle: true, winningBid: true, bids: true },
+      order: { endsAt: 'DESC' },
+    })
+
+    return auctions.map(({ winningBid, bids, ...auction }) => ({
+      ...omitDealerHidden(auction),
+      myBidAmount: Math.max(...bids.map((bid) => bid.amount)),
+      bidStatus: getBidStatus(auction, winningBid?.dealerId === dealerId),
+    }))
+  }
+
   /** Status/result filter for a phase; dealers only get their phases. */
   private getClauseForPhase(
     role: UserRole,
@@ -133,30 +177,6 @@ export class AuctionsService {
     }
   }
 
-  private async summariseBids(auctionIds: string[], dealerId?: string) {
-    if (auctionIds.length === 0) {
-      return new Map<string, { count: number; max: number }>()
-    }
-
-    const query = this.auctions.manager
-      .createQueryBuilder(Bid, 'bid')
-      .select('bid.auctionId', 'auctionId')
-      .addSelect('COUNT(*)::int', 'count')
-      .addSelect('MAX(bid.amount)', 'max')
-      .where('bid.auctionId IN (:...auctionIds)', { auctionIds })
-      .groupBy('bid.auctionId')
-    if (dealerId) query.andWhere('bid.dealerId = :dealerId', { dealerId })
-
-    const rows = await query.getRawMany<{
-      auctionId: string
-      count: number
-      max: number
-    }>()
-    return new Map(
-      rows.map(({ auctionId, ...summary }) => [auctionId, summary]),
-    )
-  }
-
   async findOne(id: string) {
     const auction = await this.auctions.findOne({
       where: { id },
@@ -175,31 +195,21 @@ export class AuctionsService {
         .map((name) => [name, true]),
     )
   }
+}
 
-  async update(id: string, updateAuctionDto: UpdateAuctionDto) {
-    const auction = await this.findScheduled(id)
-    const { startsAt, endsAt, ...rest } = updateAuctionDto
+function omitDealerHidden(auction: Omit<Auction, 'winningBid' | 'bids'>) {
+  return Object.fromEntries(
+    Object.entries(auction).filter(([key]) => !DEALER_HIDDEN.has(key)),
+  ) as Omit<typeof auction, DealerAuctionExcludedField>
+}
 
-    if (rest.vehicleId && rest.vehicleId !== auction.vehicleId) {
-      auction.vehicle = await this.vehiclesService.findOne(rest.vehicleId)
-    }
-    this.auctions.merge(auction, rest)
-    if (startsAt) auction.startsAt = new Date(startsAt)
-    if (endsAt) auction.endsAt = new Date(endsAt)
-
-    assertValidWindow(auction)
-    return this.auctions.save(auction)
-  }
-
-  private async findScheduled(id: string) {
-    const auction = await this.findOne(id)
-    if (auction.status !== 'SCHEDULED') {
-      throw new ConflictException(
-        `Auction ${id} is ${auction.status}; only SCHEDULED auctions can be changed`,
-      )
-    }
-    return auction
-  }
+function getBidStatus(
+  { status, result }: Pick<Auction, 'status' | 'result'>,
+  isWinner: boolean,
+): BidStatus {
+  if (status !== 'ENDED') return 'ACTIVE'
+  if (result === null) return 'AWAITING_RESULT'
+  return isWinner ? 'WON' : 'NOT_WON'
 }
 
 function assertValidWindow({ startsAt, endsAt }: Auction) {

@@ -16,7 +16,7 @@ const CONDITIONS = ["", "Good", "Very good", "Minor scratches on rear bumper"]
 
 export const int = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min
-export const pick = <T>(items: T[]) => items[int(0, items.length - 1)]
+const pick = <T>(items: T[]) => items[int(0, items.length - 1)]
 export const pad = (value: number) => String(value).padStart(2, "0")
 
 export function getRandomVehicleValues(): VehicleFormValues {

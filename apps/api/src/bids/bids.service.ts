@@ -37,12 +37,4 @@ export class BidsService {
 
     return this.bids.save(this.bids.create({ auctionId, dealerId, amount }))
   }
-
-  async findAllForAuction(auctionId: string) {
-    await this.auctionsService.findOne(auctionId)
-    return this.bids.find({
-      where: { auctionId },
-      order: { createdAt: 'DESC' },
-    })
-  }
 }

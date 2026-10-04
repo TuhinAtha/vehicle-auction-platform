@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreExportsUsedInFile": {
+    "type": true,
+    "interface": true
+  },
+  "workspaces": {
+    ".": {
+      "ignoreDependencies": ["prettier-plugin-tailwindcss"]
+    },
+    "apps/api": {
+      "entry": ["src/main.ts", "src/seed.ts"]
+    },
+    "apps/web": {
+      "ignore": ["components/ui/**"]
+    }
+  }
+}

@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from '@nestjs/common'
+import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common'
 import type { JwtPayload } from '@repo/shared'
 import { CurrentUser, Role } from '../auth/decorators.js'
 import { BidsService } from './bids.service.js'
@@ -23,11 +16,5 @@ export class BidsController {
     @CurrentUser() user: JwtPayload,
   ) {
     return this.bidsService.create(auctionId, user.sub, amount)
-  }
-
-  @Get()
-  @Role('ADMIN')
-  findAll(@Param('auctionId', ParseUUIDPipe) auctionId: string) {
-    return this.bidsService.findAllForAuction(auctionId)
   }
 }

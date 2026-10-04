@@ -2,7 +2,6 @@ import { QueryFailedError } from 'typeorm'
 
 export const PgErrorCode = {
   UniqueViolation: '23505',
-  ForeignKeyViolation: '23503',
 } as const
 
 export type PgErrorCode = (typeof PgErrorCode)[keyof typeof PgErrorCode]
