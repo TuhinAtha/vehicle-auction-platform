@@ -7,11 +7,23 @@ type Timing = Pick<Auction, "status" | "startsAt" | "endsAt">
 export function getTiming({ status, startsAt, endsAt }: Timing) {
   switch (status) {
     case "SCHEDULED":
-      return { label: "Starts", date: datetime.format(new Date(startsAt)) }
+      return {
+        label: "Starts",
+        date: datetime.format(new Date(startsAt)),
+        at: startsAt,
+      }
     case "LIVE":
-      return { label: "Ends", date: datetime.format(new Date(endsAt)) }
+      return {
+        label: "Ends",
+        date: datetime.format(new Date(endsAt)),
+        at: endsAt,
+      }
     case "ENDED":
-      return { label: "Ended", date: datetime.format(new Date(endsAt)) }
+      return {
+        label: "Ended",
+        date: datetime.format(new Date(endsAt)),
+        at: endsAt,
+      }
   }
 }
 

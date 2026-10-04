@@ -83,12 +83,32 @@ try {
     const tables = dataSource.entityMetadatas.map((e) => `"${e.tableName}"`)
     await m.query(`TRUNCATE ${tables.join(', ')} CASCADE`)
 
-    const [tesla, ioniq5, i4, zoe, polestar] = await m.save(Vehicle, [
+    const [
+      tesla,
+      ioniq5,
+      i4,
+      zoe,
+      polestar,
+      id3,
+      q4,
+      ev6,
+      eqa,
+      enyaq,
+      leaf,
+      modelY,
+    ] = await m.save(Vehicle, [
       ev('5YJ3E1EA7MF000001', 'Tesla', 'Model 3 Long Range', 2021, 'Berlin'),
       ev('KMHKN81AFNU000003', 'Hyundai', 'Ioniq 5', 2022, 'Hamburg'),
       ev('WBY71AW05PF000005', 'BMW', 'i4 eDrive40', 2023, 'Frankfurt'),
       ev('VF1AG000X66000006', 'Renault', 'Zoe R135', 2020, 'Stuttgart'),
       ev('YSMYKEAE5PB000007', 'Polestar', '2 Long Range', 2023, 'Düsseldorf'),
+      ev('WVWZZZE1ZMP000008', 'Volkswagen', 'ID.3 Pro', 2021, 'München'),
+      ev('WAUZZZGE5NB000009', 'Audi', 'Q4 e-tron 40', 2022, 'Köln'),
+      ev('KNDC3DLC5N5000010', 'Kia', 'EV6 GT-Line', 2022, 'Leipzig'),
+      ev('W1K2971231A000011', 'Mercedes-Benz', 'EQA 250', 2022, 'Dresden'),
+      ev('TMBJC7NY5MF000012', 'Škoda', 'Enyaq iV 80', 2021, 'Hannover'),
+      ev('1N4AZ1CP5JC000013', 'Nissan', 'Leaf e+', 2020, 'Bremen'),
+      ev('LRW3E7FA4NC000014', 'Tesla', 'Model Y Performance', 2023, 'Nürnberg'),
     ])
 
     const [, berlin, munich] = await m.save(User, [
@@ -101,22 +121,45 @@ try {
       },
     ])
 
-    const [live, , sold, unsold] = await m.save(Auction, [
-      auction(tesla, -2, 4, 25000, 28000, 'LIVE'),
-      auction(ioniq5, 24, 30, 27000, 30000, 'SCHEDULED'),
-      auction(i4, -48, -42, 35000, 38000, 'ENDED', 'SOLD'),
-      auction(zoe, -30, -24, 10000, 12000, 'ENDED', 'UNSOLD'),
-      auction(polestar, -8, -1, 30000, 35000, 'ENDED'),
-    ])
+    const [live, , sold, unsold, , , endingSoon, oneBidder, , , , review] =
+      await m.save(Auction, [
+        auction(tesla, -2, 4, 25000, 28000, 'LIVE'),
+        auction(ioniq5, 24, 30, 27000, 30000, 'SCHEDULED'),
+        auction(i4, -48, -42, 35000, 38000, 'ENDED', 'SOLD'),
+        auction(zoe, -30, -24, 10000, 12000, 'ENDED', 'UNSOLD'),
+        auction(polestar, -8, -1, 30000, 35000, 'ENDED'),
+        // Live for another day, no bids yet
+        auction(id3, -1, 26, 18000, 21000, 'LIVE'),
+        // Live, ends in 30 minutes, reserve met
+        auction(q4, -5, 0.5, 32000, 36000, 'LIVE'),
+        // Live, only one dealer has bid
+        auction(ev6, -3, 8, 30000, 33000, 'LIVE'),
+        // Starts in 45 minutes
+        auction(eqa, 0.75, 6.75, 29000, 32000, 'SCHEDULED'),
+        // Starts in three days
+        auction(enyaq, 72, 96, 26000, 29000, 'SCHEDULED'),
+        // Ended without a single bid
+        auction(leaf, -72, -66, 9000, 11000, 'ENDED', 'UNSOLD'),
+        // Ended with the reserve met, result not decided yet
+        auction(modelY, -6, -0.5, 42000, 45000, 'ENDED'),
+      ])
 
-    const bids = await m.save(Bid, [
+    const [, , , winningBid] = await m.save(Bid, [
       bid(live, berlin, 25500, -1.5),
       bid(live, munich, 26500, -0.5),
       bid(sold, munich, 37000, -46),
       bid(sold, berlin, 39000, -43),
       bid(unsold, berlin, 10500, -26),
+      bid(endingSoon, berlin, 33000, -4),
+      bid(endingSoon, munich, 34500, -2.5),
+      bid(endingSoon, berlin, 35500, -1),
+      bid(endingSoon, munich, 36500, -0.25),
+      bid(oneBidder, munich, 30500, -2),
+      bid(review, berlin, 43000, -5),
+      bid(review, munich, 44500, -3),
+      bid(review, berlin, 46000, -1),
     ])
-    await m.update(Auction, sold.id, { winningBidId: bids[3].id })
+    await m.update(Auction, sold.id, { winningBidId: winningBid.id })
   })
   console.log('Database reset with demo vehicles, users, auctions and bids')
 } finally {
