@@ -11,7 +11,7 @@ import {
   FieldTitle,
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { distance } from "@/lib/distance"
+import { distance } from "@/lib/intl"
 import { RECENT_VEHICLES_LIMIT } from "../data/constants"
 import { useAvailableVehicles } from "../hooks/useAvailableVehicles"
 

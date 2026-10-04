@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { distance } from "@/lib/distance"
+import { distance } from "@/lib/intl"
 
 export const VehicleCard = ({ vehicle }: { vehicle: Vehicle }) => (
   <Card className="h-full">

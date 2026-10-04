@@ -2,8 +2,7 @@ import type { AuctionDetailDealer } from "@repo/shared"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import { Card, CardContent } from "@/components/ui/card"
-import { shortDatetime } from "@/lib/datetime"
-import { price } from "@/lib/price"
+import { price, shortDatetime } from "@/lib/intl"
 import { AuctionTiming } from "./AuctionTiming"
 import { PlaceBidForm } from "./PlaceBidForm"
 

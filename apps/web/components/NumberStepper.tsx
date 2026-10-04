@@ -9,7 +9,7 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
-import { integer } from "@/lib/integer"
+import { integer } from "@/lib/intl"
 
 export const NumberStepper = ({
   value,

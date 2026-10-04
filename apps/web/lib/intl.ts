@@ -1,3 +1,21 @@
+export const price = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "EUR",
+  maximumFractionDigits: 0,
+})
+
+export const distance = new Intl.NumberFormat("de-DE", {
+  style: "unit",
+  unit: "kilometer",
+  maximumFractionDigits: 0,
+})
+
+export const kwh = new Intl.NumberFormat("de-DE", { maximumFractionDigits: 1 })
+
+export const integer = new Intl.NumberFormat("de-DE", {
+  maximumFractionDigits: 0,
+})
+
 export const datetime = new Intl.DateTimeFormat("en-GB", {
   dateStyle: "medium",
   timeStyle: "short",

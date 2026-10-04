@@ -2,9 +2,7 @@ import type { Vehicle } from "@repo/shared"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { monthYear } from "@/lib/datetime"
-import { distance } from "@/lib/distance"
-import { kwh } from "@/lib/kwh"
+import { distance, kwh, monthYear } from "@/lib/intl"
 
 export const VehicleDetails = ({ vehicle }: { vehicle: Vehicle }) => {
   const soh = `${vehicle.batterySohPercent} %`

@@ -2,7 +2,7 @@ import type { AuctionDetailAdmin, BidWithDealer } from "@repo/shared"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { price } from "@/lib/price"
+import { price } from "@/lib/intl"
 
 export const AuctionReviewAlert = ({
   auction,

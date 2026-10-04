@@ -10,9 +10,7 @@ import {
   CardAction,
   CardFooter,
 } from "@/components/ui/card"
-import { distance } from "@/lib/distance"
-import { shortDatetime } from "@/lib/datetime"
-import { price } from "@/lib/price"
+import { distance, price, shortDatetime } from "@/lib/intl"
 import { getTiming } from "../lib/getTimingLabel"
 import type { AuctionSummaryDealer } from "@repo/shared"
 import { AuctionStatusBadge } from "./AuctionStatusBadge"

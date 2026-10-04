@@ -1,5 +1,5 @@
 import type { Auction } from "@repo/shared"
-import { datetime } from "@/lib/datetime"
+import { datetime } from "@/lib/intl"
 
 type Timing = Pick<Auction, "status" | "startsAt" | "endsAt">
 

@@ -14,7 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { ApiError } from "@/lib/http"
-import { price } from "@/lib/price"
+import { price } from "@/lib/intl"
 import { placeBid } from "../data/mutations"
 import { AUCTION_QUERY_KEYS } from "../data/queryKeys"
 import { usePlaceBidForm } from "../hooks/usePlaceBidForm"

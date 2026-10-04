@@ -9,8 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { shortDatetime } from "@/lib/datetime"
-import { price } from "@/lib/price"
+import { price, shortDatetime } from "@/lib/intl"
 
 export const BidsTable = ({ auction }: { auction: AuctionDetailAdmin }) => {
   const bids = auction.bids.toSorted((a, b) => b.amount - a.amount)

@@ -1,7 +1,7 @@
 import type { Auction } from "@repo/shared"
 
 import { Countdown } from "@/components/Countdown"
-import { shortDatetime } from "@/lib/datetime"
+import { shortDatetime } from "@/lib/intl"
 import { getTiming } from "../lib/getTimingLabel"
 
 export const AuctionTiming = ({

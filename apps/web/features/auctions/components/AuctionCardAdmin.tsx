@@ -2,7 +2,7 @@
 
 import { AuctionResultBadge } from "./AuctionResultBadge"
 import { AuctionStatusBadge } from "./AuctionStatusBadge"
-import { price } from "@/lib/price"
+import { distance, price } from "@/lib/intl"
 import { AuctionSummaryAdmin } from "@repo/shared"
 import {
   Card,
@@ -14,7 +14,6 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { LabeledValue } from "@/components/LabeledValue"
-import { distance } from "@/lib/distance"
 import { getTiming } from "../lib/getTimingLabel"
 import { Countdown } from "@/components/Countdown"
 

@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { price } from "@/lib/price"
+import { price } from "@/lib/intl"
 import { euros } from "@/lib/validation"
 
 export const getPlaceBidFormSchema = (minimum: number) =>

@@ -2,8 +2,7 @@ import type { Vehicle } from "@repo/shared"
 
 import { StatCard } from "@/components/StatCard"
 import { Progress } from "@/components/ui/progress"
-import { distance } from "@/lib/distance"
-import { kwh } from "@/lib/kwh"
+import { distance, kwh } from "@/lib/intl"
 
 export const VehicleStats = ({ vehicle }: { vehicle: Vehicle }) => {
   const soh = `${vehicle.batterySohPercent} %`

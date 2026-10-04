@@ -2,7 +2,7 @@ import type { AuctionDetailAdmin } from "@repo/shared"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import { Card, CardContent } from "@/components/ui/card"
-import { price } from "@/lib/price"
+import { price } from "@/lib/intl"
 import { AuctionReviewAlert } from "./AuctionReviewAlert"
 import { AuctionTiming } from "./AuctionTiming"
 
