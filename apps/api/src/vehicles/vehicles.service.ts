@@ -30,16 +30,15 @@ export class VehiclesService {
     return this.vehicles
       .createQueryBuilder('vehicle')
       .where((qb) => {
-        const activeAuction = qb
+        const auctionWithoutResult = qb
           .subQuery()
           .select('1')
           .from(Auction, 'auction')
           .where('auction.vehicleId = vehicle.id')
-          .andWhere('auction.status IN (:...statuses)')
+          .andWhere('auction.result IS NULL')
           .getQuery()
-        return `NOT EXISTS ${activeAuction}`
+        return `NOT EXISTS ${auctionWithoutResult}`
       })
-      .setParameter('statuses', ['SCHEDULED', 'LIVE'])
       .orderBy('vehicle.createdAt', 'DESC')
       .take(limit)
       .getMany()
