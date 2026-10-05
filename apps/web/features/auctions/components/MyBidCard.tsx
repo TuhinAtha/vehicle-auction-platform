@@ -1,6 +1,5 @@
 import type { AuctionSummaryMyBid } from "@repo/shared"
 
-import { Countdown } from "@/components/Countdown"
 import { LabeledValue } from "@/components/LabeledValue"
 import { buttonVariants } from "@/components/ui/button"
 import {
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/card"
 import { distance, price, shortDatetime } from "@/lib/intl"
 import { getTiming } from "../lib/getTimingLabel"
+import { AuctionCountdown } from "./AuctionCountdown"
 import { BidStatusBadge } from "./BidStatusBadge"
 
 export const MyBidCard = ({ auction }: { auction: AuctionSummaryMyBid }) => {
@@ -62,7 +62,7 @@ export const MyBidCard = ({ auction }: { auction: AuctionSummaryMyBid }) => {
         <dl>
           {isActive ? (
             <LabeledValue label={`${timing.label} in`}>
-              <Countdown to={timing.at} title={timing.date} />
+              <AuctionCountdown to={timing.at} title={timing.date} />
             </LabeledValue>
           ) : (
             <LabeledValue label={timing.label}>

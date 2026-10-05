@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 import { AppController } from './app.controller.js'
 import { AppService } from './app.service.js'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -28,6 +29,7 @@ import { AuthModule } from './auth/auth.module.js'
         synchronize: config.get('DB_SYNC') !== 'false', // dev only
       }),
     }),
+    ScheduleModule.forRoot(),
     VehiclesModule,
     HealthModule,
     AuctionsModule,

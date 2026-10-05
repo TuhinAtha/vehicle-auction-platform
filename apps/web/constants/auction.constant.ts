@@ -84,3 +84,5 @@ export const BID_STATUS_BADGE: Record<BidStatus, BadgeStyle> = {
       "bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200",
   },
 }
+
+export const AUCTION_REFRESH_INTERVAL_MS = 5000

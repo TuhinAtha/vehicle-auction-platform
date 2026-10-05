@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import { Interval } from '@nestjs/schedule'
 import { InjectRepository } from '@nestjs/typeorm'
 import {
   AUCTION_PHASES,
@@ -23,6 +24,7 @@ import {
   type FindOptionsWhere,
   In,
   IsNull,
+  LessThanOrEqual,
   Not,
   Repository,
 } from 'typeorm'
@@ -35,6 +37,7 @@ const DEALER_HIDDEN = new Set<string>(DEALER_AUCTION_EXCLUDED_FIELDS)
 const DEALER_PHASES = new Set<AuctionPhase>(DEALER_AUCTION_PHASES)
 /** The highest bid wins; on a tie, the earlier one. */
 const WINNING_BID_ORDER = { amount: 'DESC', createdAt: 'ASC' } as const
+const STATUS_SYNC_INTERVAL_MS = 10_000
 
 @Injectable()
 export class AuctionsService {
@@ -55,6 +58,23 @@ export class AuctionsService {
     })
     assertValidWindow(auction)
     return this.auctions.save(auction)
+  }
+
+  /**
+   * Auctions go LIVE at startsAt and ENDED at endsAt. Ending runs first, so an
+   * auction past both times never turns LIVE.
+   */
+  @Interval(STATUS_SYNC_INTERVAL_MS)
+  async syncStatuses() {
+    const now = new Date()
+    await this.auctions.update(
+      { status: Not('ENDED'), endsAt: LessThanOrEqual(now) },
+      { status: 'ENDED' },
+    )
+    await this.auctions.update(
+      { status: 'SCHEDULED', startsAt: LessThanOrEqual(now) },
+      { status: 'LIVE' },
+    )
   }
 
   async findAll(viewer: JwtPayload, phase: AuctionPhase) {

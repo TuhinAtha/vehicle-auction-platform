@@ -1,8 +1,8 @@
 import type { Auction } from "@repo/shared"
 
-import { Countdown } from "@/components/Countdown"
 import { shortDatetime } from "@/lib/intl"
 import { getTiming } from "../lib/getTimingLabel"
+import { AuctionCountdown } from "./AuctionCountdown"
 
 export const AuctionTiming = ({
   auction,
@@ -20,7 +20,11 @@ export const AuctionTiming = ({
         {isEnded ? timing.label : `${timing.label} in`}
       </p>
       <p className="text-2xl font-semibold tabular-nums">
-        {isEnded ? endsAt : <Countdown to={timing.at} title={timing.date} />}
+        {isEnded ? (
+          endsAt
+        ) : (
+          <AuctionCountdown to={timing.at} title={timing.date} />
+        )}
       </p>
       <p className="text-xs text-muted-foreground">
         {startsAt} – {endsAt}

@@ -13,9 +13,9 @@ import {
 import { distance, price, shortDatetime } from "@/lib/intl"
 import { getTiming } from "../lib/getTimingLabel"
 import type { AuctionSummaryDealer } from "@repo/shared"
+import { AuctionCountdown } from "./AuctionCountdown"
 import { AuctionStatusBadge } from "./AuctionStatusBadge"
 import { LabeledValue } from "@/components/LabeledValue"
-import { Countdown } from "@/components/Countdown"
 
 export const AuctionCardDealer = ({
   auction,
@@ -60,7 +60,7 @@ export const AuctionCardDealer = ({
             </LabeledValue>
           ) : (
             <LabeledValue label={`${timing.label} in`} className="col-span-2">
-              <Countdown to={timing.at} title={timing.date} />
+              <AuctionCountdown to={timing.at} title={timing.date} />
             </LabeledValue>
           )}
           <LabeledValue label="Starting price" className="items-end text-right">

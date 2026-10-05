@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card"
 import { LabeledValue } from "@/components/LabeledValue"
 import { getTiming } from "../lib/getTimingLabel"
-import { Countdown } from "@/components/Countdown"
+import { AuctionCountdown } from "./AuctionCountdown"
 
 export const AuctionCardAdmin = ({
   auction,
@@ -60,7 +60,7 @@ export const AuctionCardAdmin = ({
             <LabeledValue label={timing.label}>{timing.date}</LabeledValue>
           ) : (
             <LabeledValue label={`${timing.label} in`}>
-              <Countdown to={timing.at} title={timing.date} />
+              <AuctionCountdown to={timing.at} title={timing.date} />
             </LabeledValue>
           )}
           {auction.status === "SCHEDULED" ? (
