@@ -1,6 +1,7 @@
 import type { Vehicle } from "@repo/shared"
 
 import { VehicleDetails } from "@/features/vehicles/components/VehicleDetails"
+import { VehiclePhotoGallery } from "@/features/vehicles/components/VehiclePhotoGallery"
 import { VehicleStats } from "@/features/vehicles/components/VehicleStats"
 
 export const AuctionDetailLayout = ({
@@ -27,6 +28,7 @@ export const AuctionDetailLayout = ({
           {vehicle.year} · {vehicle.city}, {vehicle.country}
         </p>
       </header>
+      <VehiclePhotoGallery vehicle={vehicle} />
       <VehicleStats vehicle={vehicle} />
       {children}
       <VehicleDetails vehicle={vehicle} />

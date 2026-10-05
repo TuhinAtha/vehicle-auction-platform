@@ -6,4 +6,5 @@ export const defaultVehicleValues = {
   city: "",
   country: "DE",
   condition: "",
+  photos: [],
 }

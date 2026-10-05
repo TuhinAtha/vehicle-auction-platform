@@ -14,6 +14,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { LabeledValue } from "@/components/LabeledValue"
+import { VehiclePhoto } from "@/features/vehicles/components/VehiclePhoto"
 import { getTiming } from "../lib/getTimingLabel"
 import { AuctionCountdown } from "./AuctionCountdown"
 
@@ -25,7 +26,8 @@ export const AuctionCardAdmin = ({
   const { vehicle } = auction
   const timing = getTiming(auction)
   return (
-    <Card className="h-full cursor-pointer transition-shadow hover:shadow-md hover:ring-foreground/20">
+    <Card className="h-full cursor-pointer pt-0 transition-shadow hover:shadow-md hover:ring-foreground/20">
+      <VehiclePhoto vehicle={vehicle} />
       <CardHeader>
         <CardAction className="flex items-center gap-2">
           {auction.status === "ENDED" ? (

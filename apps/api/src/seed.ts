@@ -1,9 +1,13 @@
-// Dev-only: wipes every table and inserts a small demo dataset.
+// Dev-only: wipes every table and uploaded vehicle photo, then inserts a small demo dataset.
+import { randomUUID } from 'node:crypto'
+import { copyFileSync, mkdirSync, rmSync } from 'node:fs'
+import { join } from 'node:path'
 import { NestFactory } from '@nestjs/core'
-import type {
-  AuctionResult,
-  AuctionStatus,
-  CreateVehicleInput,
+import {
+  type AuctionResult,
+  type AuctionStatus,
+  type CreateVehicleInput,
+  VEHICLE_PHOTOS_PATH,
 } from '@repo/shared'
 import { DataSource } from 'typeorm'
 import { AppModule } from './app.module.js'
@@ -11,6 +15,7 @@ import { Auction } from './auctions/entities/auction.entity.js'
 import { Bid } from './bids/entities/bid.entity.js'
 import { User } from './users/entities/user.entity.js'
 import { Vehicle } from './vehicles/entities/vehicle.entity.js'
+import { UPLOADS_DIR } from './vehicles/vehicle-photo-upload.js'
 
 if (process.env.NODE_ENV === 'production') {
   console.error('Refusing to reset the database: NODE_ENV is "production"')
@@ -21,12 +26,27 @@ const MINUTE = 1 / 60
 const hoursFromNow = (hours: number) =>
   new Date(Date.now() + hours * 60 * 60 * 1000)
 
+const SEED_PHOTOS_DIR = join(process.cwd(), 'seed-photos')
+const VEHICLE_PHOTOS_DIR = join(UPLOADS_DIR, 'vehicles')
+
+/** Copies seed-photos/<name>-1.jpg … <name>-<count>.jpg into the uploads folder. */
+const photos = (name: string, count: number) =>
+  Array.from({ length: count }, (_, index) => {
+    const file = `${randomUUID()}.jpg`
+    copyFileSync(
+      join(SEED_PHOTOS_DIR, `${name}-${index + 1}.jpg`),
+      join(VEHICLE_PHOTOS_DIR, file),
+    )
+    return `${VEHICLE_PHOTOS_PATH}/${file}`
+  })
+
 const ev = (
   vin: string,
   make: string,
   model: string,
   year: number,
   city: string,
+  photos: string[] = [],
 ): CreateVehicleInput => ({
   vin,
   make,
@@ -40,7 +60,7 @@ const ev = (
   rangeKm: 450,
   registrationDate: `${year}-06-01`,
   condition: null,
-  photos: [],
+  photos,
 })
 
 const auction = (
@@ -83,6 +103,8 @@ try {
   await dataSource.transaction(async (m) => {
     const tables = dataSource.entityMetadatas.map((e) => `"${e.tableName}"`)
     await m.query(`TRUNCATE ${tables.join(', ')} CASCADE`)
+    rmSync(VEHICLE_PHOTOS_DIR, { recursive: true, force: true })
+    mkdirSync(VEHICLE_PHOTOS_DIR, { recursive: true })
 
     const [
       tesla,
@@ -98,18 +120,95 @@ try {
       leaf,
       modelY,
     ] = await m.save(Vehicle, [
-      ev('5YJ3E1EA7MF000001', 'Tesla', 'Model 3 Long Range', 2021, 'Berlin'),
-      ev('KMHKN81AFNU000003', 'Hyundai', 'Ioniq 5', 2022, 'Hamburg'),
-      ev('WBY71AW05PF000005', 'BMW', 'i4 eDrive40', 2023, 'Frankfurt'),
-      ev('VF1AG000X66000006', 'Renault', 'Zoe R135', 2020, 'Stuttgart'),
-      ev('YSMYKEAE5PB000007', 'Polestar', '2 Long Range', 2023, 'Düsseldorf'),
-      ev('WVWZZZE1ZMP000008', 'Volkswagen', 'ID.3 Pro', 2021, 'München'),
-      ev('WAUZZZGE5NB000009', 'Audi', 'Q4 e-tron 40', 2022, 'Köln'),
-      ev('KNDC3DLC5N5000010', 'Kia', 'EV6 GT-Line', 2022, 'Leipzig'),
-      ev('W1K2971231A000011', 'Mercedes-Benz', 'EQA 250', 2022, 'Dresden'),
-      ev('TMBJC7NY5MF000012', 'Škoda', 'Enyaq iV 80', 2021, 'Hannover'),
+      ev(
+        '5YJ3E1EA7MF000001',
+        'Tesla',
+        'Model 3 Long Range',
+        2021,
+        'Berlin',
+        photos('tesla-model-3', 3),
+      ),
+      ev(
+        'KMHKN81AFNU000003',
+        'Hyundai',
+        'Ioniq 5',
+        2022,
+        'Hamburg',
+        photos('hyundai-ioniq-5', 3),
+      ),
+      ev(
+        'WBY71AW05PF000005',
+        'BMW',
+        'i4 eDrive40',
+        2023,
+        'Frankfurt',
+        photos('bmw-i4', 3),
+      ),
+      ev(
+        'VF1AG000X66000006',
+        'Renault',
+        'Zoe R135',
+        2020,
+        'Stuttgart',
+        photos('renault-zoe', 1),
+      ),
+      ev(
+        'YSMYKEAE5PB000007',
+        'Polestar',
+        '2 Long Range',
+        2023,
+        'Düsseldorf',
+        photos('polestar-2', 3),
+      ),
+      ev(
+        'WVWZZZE1ZMP000008',
+        'Volkswagen',
+        'ID.3 Pro',
+        2021,
+        'München',
+        photos('vw-id3', 3),
+      ),
+      ev(
+        'WAUZZZGE5NB000009',
+        'Audi',
+        'Q4 e-tron 40',
+        2022,
+        'Köln',
+        photos('audi-q4-e-tron', 3),
+      ),
+      ev(
+        'KNDC3DLC5N5000010',
+        'Kia',
+        'EV6 GT-Line',
+        2022,
+        'Leipzig',
+        photos('kia-ev6', 3),
+      ),
+      ev(
+        'W1K2971231A000011',
+        'Mercedes-Benz',
+        'EQA 250',
+        2022,
+        'Dresden',
+        photos('mercedes-eqa', 3),
+      ),
+      ev(
+        'TMBJC7NY5MF000012',
+        'Škoda',
+        'Enyaq iV 80',
+        2021,
+        'Hannover',
+        photos('skoda-enyaq', 3),
+      ),
       ev('1N4AZ1CP5JC000013', 'Nissan', 'Leaf e+', 2020, 'Bremen'),
-      ev('LRW3E7FA4NC000014', 'Tesla', 'Model Y Performance', 2023, 'Nürnberg'),
+      ev(
+        'LRW3E7FA4NC000014',
+        'Tesla',
+        'Model Y Performance',
+        2023,
+        'Nürnberg',
+        photos('tesla-model-y', 3),
+      ),
     ])
 
     const [, berlin, munich] = await m.save(User, [

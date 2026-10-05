@@ -1,6 +1,7 @@
 export * from './constants/auction.constant'
 export * from './constants/bid.constant'
 export * from './constants/user.constant'
+export * from './constants/vehicle.constant'
 
 export * from './interfaces/auction.interface'
 export * from './interfaces/auth.interface'

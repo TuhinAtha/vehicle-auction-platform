@@ -15,7 +15,7 @@ const MODELS = [
 const CITIES = ["Berlin", "Hamburg", "München", "Köln", "Frankfurt", "Leipzig"]
 const CONDITIONS = ["", "Good", "Very good", "Minor scratches on rear bumper"]
 
-export function getRandomVehicleValues(): VehicleFormValues {
+export function getRandomVehicleValues(): Omit<VehicleFormValues, "photos"> {
   const [make, model] = faker.helpers.arrayElement(MODELS)
   const registrationDate = faker.date
     .between({ from: "2019-01-01", to: "2024-12-31" })

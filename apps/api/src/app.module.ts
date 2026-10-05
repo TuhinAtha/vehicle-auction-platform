@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { UPLOADS_PATH } from '@repo/shared'
 import { AppController } from './app.controller.js'
 import { AppService } from './app.service.js'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -10,6 +12,7 @@ import { AuctionsModule } from './auctions/auctions.module.js'
 import { BidsModule } from './bids/bids.module.js'
 import { UsersModule } from './users/users.module.js'
 import { AuthModule } from './auth/auth.module.js'
+import { UPLOADS_DIR } from './vehicles/vehicle-photo-upload.js'
 
 @Module({
   imports: [
@@ -30,6 +33,10 @@ import { AuthModule } from './auth/auth.module.js'
       }),
     }),
     ScheduleModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: UPLOADS_DIR,
+      serveRoot: UPLOADS_PATH,
+    }),
     VehiclesModule,
     HealthModule,
     AuctionsModule,

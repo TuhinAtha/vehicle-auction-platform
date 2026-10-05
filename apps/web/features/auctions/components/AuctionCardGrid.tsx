@@ -25,7 +25,7 @@ export const AuctionCardGrid = ({
   }
 
   return (
-    <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+    <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {auctions.map((auction) => (
         <li key={auction.id}>
           {role === "DEALER" ? (

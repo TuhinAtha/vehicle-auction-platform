@@ -1,3 +1,4 @@
+import { VEHICLE_PHOTO_MAX_COUNT } from "@repo/shared"
 import { z } from "zod"
 
 const text = z.string().trim().min(1, "Required.")
@@ -30,6 +31,7 @@ export const vehicleFormSchema = z.object({
   city: text,
   country: text,
   condition: z.string().trim(),
+  photos: z.array(z.string()).max(VEHICLE_PHOTO_MAX_COUNT),
 })
 
 export type VehicleFormValues = z.infer<typeof vehicleFormSchema>

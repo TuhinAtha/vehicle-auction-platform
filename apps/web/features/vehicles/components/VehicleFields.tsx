@@ -5,6 +5,7 @@ import { type RegisterOptions, useFormContext } from "react-hook-form"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import type { VehicleFormValues } from "../lib/vehicleFormSchema"
+import { VehiclePhotosField } from "./VehiclePhotosField"
 
 export const VehicleFields = () => {
   const {
@@ -107,6 +108,8 @@ export const VehicleFields = () => {
         <Input {...input("condition")} />
         <FieldError id="condition-error" errors={[errors.condition]} />
       </Field>
+
+      <VehiclePhotosField />
     </div>
   )
 }

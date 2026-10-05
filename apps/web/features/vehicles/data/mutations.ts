@@ -15,7 +15,16 @@ export function createVehicle(values: VehicleFormValues) {
     body: {
       ...vehicle,
       condition: vehicle.condition || null,
-      photos: [],
     } satisfies CreateVehicleInput,
+  })
+}
+
+export function uploadVehiclePhoto(photo: File) {
+  const body = new FormData()
+  body.append("photo", photo)
+
+  return fetchBff<{ path: string }>(VEHICLE_ENDPOINTS.photos, {
+    method: "POST",
+    body,
   })
 }

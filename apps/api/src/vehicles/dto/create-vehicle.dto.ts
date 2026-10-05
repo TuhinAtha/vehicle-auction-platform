@@ -1,5 +1,10 @@
-import type { CreateVehicleInput } from '@repo/shared'
 import {
+  type CreateVehicleInput,
+  VEHICLE_PHOTO_MAX_COUNT,
+  VEHICLE_PHOTO_PATH_PATTERN,
+} from '@repo/shared'
+import {
+  ArrayMaxSize,
   IsArray,
   IsDateString,
   IsInt,
@@ -7,7 +12,6 @@ import {
   IsNumber,
   IsPositive,
   IsString,
-  IsUrl,
   Matches,
   Max,
   Min,
@@ -63,7 +67,11 @@ export class CreateVehicleDto implements CreateVehicleInput {
   condition: string | null
 
   @IsArray()
-  @IsUrl({}, { each: true })
+  @ArrayMaxSize(VEHICLE_PHOTO_MAX_COUNT)
+  @Matches(VEHICLE_PHOTO_PATH_PATTERN, {
+    each: true,
+    message: 'each photo must be the path of an uploaded vehicle photo',
+  })
   photos: string[]
 
   @IsString()
