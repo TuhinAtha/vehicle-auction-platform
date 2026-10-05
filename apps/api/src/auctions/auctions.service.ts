@@ -234,9 +234,6 @@ export class AuctionsService {
           id: Not(In(myBids.map(({ auctionId }) => auctionId))),
         }
       }
-      case 'SOLD':
-      case 'UNSOLD':
-        return { status: 'ENDED', result: phase }
       case 'PENDING':
         return { status: 'ENDED', result: IsNull() }
     }

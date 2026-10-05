@@ -11,8 +11,6 @@ export const DEFAULT_BID_STATUS: BidStatus = "ACTIVE"
 export const AUCTION_PHASE_LABEL: Record<AuctionPhase, string> = {
   SCHEDULED: "Scheduled",
   LIVE: "Live",
-  SOLD: "Sold",
-  UNSOLD: "Unsold",
   PENDING: "Pending",
 }
 
@@ -59,8 +57,6 @@ export const AUCTION_PHASE_BADGE_CLASS: Record<AuctionPhase, string> = {
   PENDING: AUCTION_PENDING_BADGE.className,
   LIVE: AUCTION_STATUS_BADGE.LIVE.className,
   SCHEDULED: AUCTION_STATUS_BADGE.SCHEDULED.className,
-  SOLD: AUCTION_RESULT_BADGE.SOLD.className,
-  UNSOLD: AUCTION_RESULT_BADGE.UNSOLD.className,
 }
 
 export const BID_STATUS_BADGE: Record<BidStatus, BadgeStyle> = {

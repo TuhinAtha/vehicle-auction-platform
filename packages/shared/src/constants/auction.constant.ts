@@ -9,8 +9,6 @@ export const AUCTION_PHASES = [
   'PENDING', // ENDED + NO RESULT
   'LIVE',
   'SCHEDULED',
-  'SOLD', // ENDED + SOLD
-  'UNSOLD', // ENDED + UNSOLD
 ] as const
 
 export const DEALER_AUCTION_PHASES = [
