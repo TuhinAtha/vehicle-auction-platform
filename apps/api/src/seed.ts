@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === 'production') {
   process.exit(1)
 }
 
+const MINUTE = 1 / 60
 const hoursFromNow = (hours: number) =>
   new Date(Date.now() + hours * 60 * 60 * 1000)
 
@@ -123,21 +124,21 @@ try {
 
     const [live, , sold, unsold, , , endingSoon, oneBidder, , , , review] =
       await m.save(Auction, [
-        auction(tesla, -2, 4, 25000, 28000, 'LIVE'),
-        auction(ioniq5, 24, 30, 27000, 30000, 'SCHEDULED'),
+        auction(tesla, -2, 5 * MINUTE, 25000, 28000, 'LIVE'),
+        auction(ioniq5, 2 * MINUTE, 5 * MINUTE, 27000, 30000, 'SCHEDULED'),
         auction(i4, -48, -42, 35000, 38000, 'ENDED', 'SOLD'),
         auction(zoe, -30, -24, 10000, 12000, 'ENDED', 'UNSOLD'),
         auction(polestar, -8, -1, 30000, 35000, 'ENDED'),
-        // Live for another day, no bids yet
-        auction(id3, -1, 26, 18000, 21000, 'LIVE'),
-        // Live, ends in 30 minutes, reserve met
-        auction(q4, -5, 0.5, 32000, 36000, 'LIVE'),
+        // Live, no bids yet
+        auction(id3, -1, 4 * MINUTE, 18000, 21000, 'LIVE'),
+        // Live, ends in a minute, reserve met
+        auction(q4, -5, 1 * MINUTE, 32000, 36000, 'LIVE'),
         // Live, only one dealer has bid
-        auction(ev6, -3, 8, 30000, 33000, 'LIVE'),
-        // Starts in 45 minutes
-        auction(eqa, 0.75, 6.75, 29000, 32000, 'SCHEDULED'),
-        // Starts in three days
-        auction(enyaq, 72, 96, 26000, 29000, 'SCHEDULED'),
+        auction(ev6, -3, 3 * MINUTE, 30000, 33000, 'LIVE'),
+        // Starts in a minute
+        auction(eqa, 1 * MINUTE, 4 * MINUTE, 29000, 32000, 'SCHEDULED'),
+        // Starts in three minutes
+        auction(enyaq, 3 * MINUTE, 5 * MINUTE, 26000, 29000, 'SCHEDULED'),
         // Ended without a single bid
         auction(leaf, -72, -66, 9000, 11000, 'ENDED', 'UNSOLD'),
         // Ended with the reserve met, result not decided yet
