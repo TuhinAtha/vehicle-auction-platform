@@ -1,4 +1,4 @@
-import type { Vehicle, VehicleAvailabilityCounts } from "@repo/shared"
+import type { VehicleAvailabilityCounts, VehicleSummary } from "@repo/shared"
 import type { VehiclesQueryParams } from "../types"
 import { queryOptions } from "@tanstack/react-query"
 
@@ -14,7 +14,7 @@ export const getVehiclesQuery = ({
   queryOptions({
     queryKey: VEHICLE_QUERY_KEYS.list(queryParams),
     queryFn: ({ signal }) =>
-      fetchBff<Vehicle[]>(VEHICLE_ENDPOINTS.root, {
+      fetchBff<VehicleSummary[]>(VEHICLE_ENDPOINTS.root, {
         queryParams,
         signal,
       }),

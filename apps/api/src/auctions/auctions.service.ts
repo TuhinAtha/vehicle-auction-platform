@@ -82,7 +82,7 @@ export class AuctionsService {
       select: this.selectFor(viewer.role),
       where: await this.getClauseForPhase(viewer, phase),
       relations: { vehicle: true },
-      order: { startsAt: 'ASC' },
+      order: phase === 'LIVE' ? { endsAt: 'ASC' } : { startsAt: 'ASC' },
     })
     if (viewer.role === 'DEALER') return auctions
 
@@ -196,7 +196,7 @@ export class AuctionsService {
     const auctions = await this.auctions.find({
       where: { bids: { dealerId } },
       relations: { vehicle: true, winningBid: true, bids: true },
-      order: { endsAt: 'DESC' },
+      order: { endsAt: 'ASC' },
     })
 
     return auctions.map(({ winningBid, bids, ...auction }) => ({

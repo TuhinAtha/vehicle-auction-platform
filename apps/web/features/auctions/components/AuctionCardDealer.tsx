@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardAction,
   CardFooter,
 } from "@/components/ui/card"
 import { distance, price, shortDatetime } from "@/lib/intl"
@@ -15,7 +14,6 @@ import { VehiclePhoto } from "@/features/vehicles/components/VehiclePhoto"
 import { getTiming } from "../lib/getTimingLabel"
 import type { AuctionSummaryDealer } from "@repo/shared"
 import { AuctionCountdown } from "./AuctionCountdown"
-import { AuctionStatusBadge } from "./AuctionStatusBadge"
 import { LabeledValue } from "@/components/LabeledValue"
 
 export const AuctionCardDealer = ({
@@ -31,9 +29,6 @@ export const AuctionCardDealer = ({
     <Card className="h-full cursor-pointer pt-0 transition-shadow hover:shadow-md hover:ring-foreground/20">
       <VehiclePhoto vehicle={vehicle} />
       <CardHeader>
-        <CardAction className="flex items-center gap-2">
-          <AuctionStatusBadge status={auction.status} />
-        </CardAction>
         <CardTitle className="truncate">
           {vehicle.make} {vehicle.model}
         </CardTitle>

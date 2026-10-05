@@ -4,7 +4,6 @@ import { LabeledValue } from "@/components/LabeledValue"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
@@ -15,7 +14,6 @@ import { distance, price, shortDatetime } from "@/lib/intl"
 import { VehiclePhoto } from "@/features/vehicles/components/VehiclePhoto"
 import { getTiming } from "../lib/getTimingLabel"
 import { AuctionCountdown } from "./AuctionCountdown"
-import { BidStatusBadge } from "./BidStatusBadge"
 
 export const MyBidCard = ({ auction }: { auction: AuctionSummaryMyBid }) => {
   const { vehicle } = auction
@@ -26,9 +24,6 @@ export const MyBidCard = ({ auction }: { auction: AuctionSummaryMyBid }) => {
     <Card className="h-full cursor-pointer pt-0 transition-shadow hover:shadow-md hover:ring-foreground/20">
       <VehiclePhoto vehicle={vehicle} />
       <CardHeader>
-        <CardAction>
-          <BidStatusBadge status={auction.bidStatus} />
-        </CardAction>
         <CardTitle className="truncate">
           {vehicle.make} {vehicle.model}
         </CardTitle>

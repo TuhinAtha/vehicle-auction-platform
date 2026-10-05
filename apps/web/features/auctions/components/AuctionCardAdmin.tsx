@@ -65,36 +65,23 @@ export const AuctionCardAdmin = ({
               <AuctionCountdown to={timing.at} title={timing.date} />
             </LabeledValue>
           )}
-          {auction.status === "SCHEDULED" ? (
-            <LabeledValue
-              label="Starting price"
-              className="items-end text-right"
-            >
-              {price.format(auction.startingPrice)}
-            </LabeledValue>
-          ) : (
-            <LabeledValue label="Highest bid" className="items-end text-right">
-              {auction.maxBidAmount
-                ? price.format(auction.maxBidAmount)
-                : "No bids"}
-            </LabeledValue>
-          )}
+
+          <LabeledValue label="Starting price" className="items-end text-right">
+            {price.format(auction.startingPrice)}
+          </LabeledValue>
         </dl>
       </CardContent>
       <CardFooter>
-        <LabeledValue label="Reserve price">
-          {price.format(auction.reservePrice)}
-        </LabeledValue>
-        {auction.maxBidAmount !== null &&
-          (auction.maxBidAmount >= auction.reservePrice ? (
-            <p className="ml-auto text-sm font-medium text-green-700 dark:text-green-300">
-              Reserve met
-            </p>
-          ) : (
-            <p className="ml-auto text-sm font-medium text-amber-700 dark:text-amber-300">
-              Below Reserve
-            </p>
-          ))}
+        <dl className="flex w-full items-center justify-between gap-4">
+          <LabeledValue label="Reserve price">
+            {price.format(auction.reservePrice)}
+          </LabeledValue>
+          <LabeledValue label="Highest bid" className="items-end text-right">
+            {auction.maxBidAmount
+              ? price.format(auction.maxBidAmount)
+              : "No bids"}
+          </LabeledValue>
+        </dl>
       </CardFooter>
     </Card>
   )

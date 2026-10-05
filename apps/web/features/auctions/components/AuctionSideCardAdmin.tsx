@@ -32,7 +32,9 @@ export const AuctionSideCardAdmin = ({
 
         {auction.status !== "SCHEDULED" && (
           <div className="border-t pt-3">
-            <p className="text-sm text-muted-foreground">Highest bid</p>
+            <p className="text-sm text-muted-foreground">
+              {auction.result === "SOLD" ? "Winning bid" : "Highest bid"}
+            </p>
             <p className="text-2xl font-semibold tabular-nums">
               {highestBid ? price.format(highestBid.amount) : "None"}
             </p>

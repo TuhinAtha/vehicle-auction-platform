@@ -21,7 +21,5 @@ export const VehiclesContainer = ({ queryParams }: VehiclesContainerProps) => {
     )
   }
 
-  return (
-    <VehicleCardGrid vehicles={data} availability={queryParams.availability} />
-  )
+  return <VehicleCardGrid vehicles={data} />
 }

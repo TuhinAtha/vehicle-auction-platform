@@ -1,13 +1,12 @@
-import type { Vehicle, VehicleAvailability } from "@repo/shared"
+import type { VehicleSummary } from "@repo/shared"
+import Link from "next/link"
 
 import { VehicleCard } from "./VehicleCard"
 
 export const VehicleCardGrid = ({
   vehicles,
-  availability,
 }: {
-  vehicles: Vehicle[]
-  availability: VehicleAvailability
+  vehicles: VehicleSummary[]
 }) => {
   if (vehicles.length === 0) {
     return (
@@ -21,7 +20,13 @@ export const VehicleCardGrid = ({
     <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {vehicles.map((vehicle) => (
         <li key={vehicle.id}>
-          <VehicleCard vehicle={vehicle} availability={availability} />
+          {vehicle.auction ? (
+            <Link href={`/admin/auctions/${vehicle.auction.id}`}>
+              <VehicleCard vehicle={vehicle} />
+            </Link>
+          ) : (
+            <VehicleCard vehicle={vehicle} />
+          )}
         </li>
       ))}
     </ul>

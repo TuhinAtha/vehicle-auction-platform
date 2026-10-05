@@ -9,6 +9,7 @@ import {
   type VehicleAvailability,
   type VehicleAvailabilityCounts,
 } from '@repo/shared'
+import { maxBy, omit } from 'es-toolkit'
 import { In, IsNull, Not, Repository } from 'typeorm'
 import { Auction } from '../auctions/entities/auction.entity.js'
 import { isPgError, PgErrorCode } from '../common/utils/pg.util.js'
@@ -52,22 +53,34 @@ export class VehiclesService {
 
   private async findSold(limit?: number) {
     const auctions = await this.vehicles.manager.find(Auction, {
-      select: { vehicleId: true },
       where: { result: 'SOLD' },
+      relations: { winningBid: true },
     })
 
-    return this.vehicles.find({
+    const vehicles = await this.vehicles.find({
       where: { id: In(auctions.map(({ vehicleId }) => vehicleId)) },
       order: { createdAt: 'DESC' },
       take: limit,
+    })
+
+    return vehicles.map((vehicle) => {
+      const auction = auctions.find(({ vehicleId }) => vehicleId === vehicle.id)
+      return {
+        ...vehicle,
+        auction: auction && {
+          ...omit(auction, ['winningBid']),
+          winningBidAmount: auction.winningBid?.amount,
+        },
+      }
     })
   }
 
   // Every auction ended UNSOLD: none open, none sold
   private async findUnsold(limit?: number) {
     const unsoldAuctions = await this.vehicles.manager.find(Auction, {
-      select: { vehicleId: true },
       where: { result: 'UNSOLD' },
+      relations: { bids: true },
+      order: { endsAt: 'DESC' },
     })
     const otherAuctions = await this.vehicles.manager.find(Auction, {
       select: { vehicleId: true },
@@ -78,10 +91,23 @@ export class VehiclesService {
       .map(({ vehicleId }) => vehicleId)
       .filter((id) => !otherIds.has(id))
 
-    return this.vehicles.find({
+    const vehicles = await this.vehicles.find({
       where: { id: In(unsoldIds) },
       order: { createdAt: 'DESC' },
       take: limit,
+    })
+
+    return vehicles.map((vehicle) => {
+      const auction = unsoldAuctions.find(
+        ({ vehicleId }) => vehicleId === vehicle.id,
+      )
+      return {
+        ...vehicle,
+        auction: auction && {
+          ...omit(auction, ['bids']),
+          maxBidAmount: maxBy(auction.bids, (bid) => bid.amount)?.amount,
+        },
+      }
     })
   }
 

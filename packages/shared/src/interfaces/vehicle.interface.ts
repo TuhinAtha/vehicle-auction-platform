@@ -1,3 +1,5 @@
+import type { Auction } from './auction.interface'
+
 export interface Vehicle {
   id: string
   vin: string
@@ -16,4 +18,13 @@ export interface Vehicle {
   country: string
   createdAt: string
   updatedAt: string
+}
+
+/** GET /vehicles */
+export interface VehicleSummary extends Vehicle {
+  /** The auction that sold the vehicle, or its most recent UNSOLD one; none for UNLISTED */
+  auction?: Auction & {
+    maxBidAmount?: number
+    winningBidAmount?: number
+  }
 }

@@ -1,31 +1,28 @@
-import type { Vehicle, VehicleAvailability } from "@repo/shared"
+import type { VehicleSummary } from "@repo/shared"
+import { cn } from "cn"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { distance } from "@/lib/intl"
-import { VehicleAvailabilityBadge } from "./VehicleAvailabilityBadge"
+import { datetime, distance, price } from "@/lib/intl"
 import { VehiclePhoto } from "./VehiclePhoto"
 
-export const VehicleCard = ({
-  vehicle,
-  availability,
-}: {
-  vehicle: Vehicle
-  availability: VehicleAvailability
-}) => (
-  <Card className="h-full pt-0">
+export const VehicleCard = ({ vehicle }: { vehicle: VehicleSummary }) => (
+  <Card
+    className={cn(
+      "h-full pt-0",
+      vehicle.auction &&
+        "cursor-pointer transition-shadow hover:shadow-md hover:ring-foreground/20"
+    )}
+  >
     <VehiclePhoto vehicle={vehicle} />
     <CardHeader>
-      <CardAction>
-        <VehicleAvailabilityBadge availability={availability} />
-      </CardAction>
       <CardTitle className="truncate">
         {vehicle.make} {vehicle.model}
       </CardTitle>
@@ -48,13 +45,55 @@ export const VehicleCard = ({
       </dl>
 
       <dl className="grid grid-cols-3 gap-x-4 pt-4">
-        <LabeledValue label="Range">
-          {distance.format(vehicle.rangeKm)}
-        </LabeledValue>
-        <LabeledValue label="VIN" className="col-span-2 items-end text-right">
-          {vehicle.vin}
-        </LabeledValue>
+        {vehicle.auction ? (
+          <>
+            <LabeledValue label="Ended" className="col-span-2">
+              {datetime.format(new Date(vehicle.auction.endsAt))}
+            </LabeledValue>
+            <LabeledValue
+              label="Starting price"
+              className="items-end text-right"
+            >
+              {price.format(vehicle.auction.startingPrice)}
+            </LabeledValue>
+          </>
+        ) : (
+          <>
+            <LabeledValue label="Range">
+              {distance.format(vehicle.rangeKm)}
+            </LabeledValue>
+            <LabeledValue
+              label="VIN"
+              className="col-span-2 items-end text-right"
+            >
+              {vehicle.vin}
+            </LabeledValue>
+          </>
+        )}
       </dl>
     </CardContent>
+
+    {vehicle.auction && (
+      <CardFooter>
+        <dl className="flex w-full items-center justify-between gap-4">
+          <LabeledValue label="Reserve price">
+            {price.format(vehicle.auction.reservePrice)}
+          </LabeledValue>
+          {vehicle.auction.result === "SOLD" ? (
+            <LabeledValue label="Winning bid" className="items-end text-right">
+              {vehicle.auction.winningBidAmount !== undefined
+                ? price.format(vehicle.auction.winningBidAmount)
+                : "–"}
+            </LabeledValue>
+          ) : (
+            <LabeledValue label="Highest bid" className="items-end text-right">
+              {vehicle.auction.maxBidAmount !== undefined
+                ? price.format(vehicle.auction.maxBidAmount)
+                : "No bids"}
+            </LabeledValue>
+          )}
+        </dl>
+      </CardFooter>
+    )}
   </Card>
 )
