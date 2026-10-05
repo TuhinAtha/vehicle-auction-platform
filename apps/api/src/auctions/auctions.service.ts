@@ -13,7 +13,6 @@ import {
   type BidStatusCounts,
   DEALER_AUCTION_EXCLUDED_FIELDS,
   DEALER_AUCTION_PHASES,
-  type DealerAuctionPhase,
   type JwtPayload,
   type UserRole,
 } from '@repo/shared'
@@ -55,39 +54,28 @@ export class AuctionsService {
     return this.auctions.save(auction)
   }
 
-  async findAll(viewer: JwtPayload, phase?: AuctionPhase | DealerAuctionPhase) {
+  async findAll(viewer: JwtPayload, phase: AuctionPhase) {
     const auctions = await this.auctions.find({
       select: this.selectFor(viewer.role),
-      where: this.getClauseForPhase(viewer.role, phase),
+      where: await this.getClauseForPhase(viewer, phase),
       relations: { vehicle: true },
       order: { startsAt: 'ASC' },
     })
+    if (viewer.role === 'DEALER') return auctions
 
     const bids = await this.auctions.manager.find(Bid, {
-      where: {
-        auctionId: In(auctions.map(({ id }) => id)),
-        ...(viewer.role === 'DEALER' && { dealerId: viewer.sub }),
-      },
+      where: { auctionId: In(auctions.map(({ id }) => id)) },
     })
     const bidsByAuction = groupBy(bids, (bid) => bid.auctionId)
 
-    if (viewer.role === 'ADMIN') {
-      return auctions.map((auction) => {
-        const auctionBids = bidsByAuction[auction.id] ?? []
-        return {
-          ...auction,
-          bidCount: auctionBids.length,
-          maxBidAmount: maxBy(auctionBids, (bid) => bid.amount)?.amount ?? null,
-        }
-      })
-    }
-
-    return auctions.map((auction) => ({
-      ...auction,
-      myBidAmount:
-        maxBy(bidsByAuction[auction.id] ?? [], (bid) => bid.amount)?.amount ??
-        null,
-    }))
+    return auctions.map((auction) => {
+      const auctionBids = bidsByAuction[auction.id] ?? []
+      return {
+        ...auction,
+        bidCount: auctionBids.length,
+        maxBidAmount: maxBy(auctionBids, (bid) => bid.amount)?.amount ?? null,
+      }
+    })
   }
 
   /** The full auction: admins get every bid, dealers their own highest one. */
@@ -109,12 +97,15 @@ export class AuctionsService {
     return { ...auction, myBid }
   }
 
-  /** Number of auctions in each phase the role can see. */
-  async countByPhase(role: UserRole): Promise<AuctionPhaseCounts> {
-    const phases = role === 'DEALER' ? DEALER_AUCTION_PHASES : AUCTION_PHASES
+  /** Number of auctions in each phase the viewer can see. */
+  async countByPhase(viewer: JwtPayload): Promise<AuctionPhaseCounts> {
+    const phases =
+      viewer.role === 'DEALER' ? DEALER_AUCTION_PHASES : AUCTION_PHASES
     const counts = await Promise.all(
-      phases.map((phase) =>
-        this.auctions.count({ where: this.getClauseForPhase(role, phase) }),
+      phases.map(async (phase) =>
+        this.auctions.count({
+          where: await this.getClauseForPhase(viewer, phase),
+        }),
       ),
     )
     return Object.fromEntries(phases.map((phase, i) => [phase, counts[i]]))
@@ -149,27 +140,38 @@ export class AuctionsService {
     }))
   }
 
-  /** Status/result filter for a phase; dealers only get their phases. */
-  private getClauseForPhase(
-    role: UserRole,
-    phase?: AuctionPhase | DealerAuctionPhase,
-  ): FindOptionsWhere<Auction> {
-    if (role === 'DEALER') {
-      if (!phase) return { status: In(DEALER_AUCTION_PHASES) }
-      if (!DEALER_PHASES.has(phase)) {
-        throw new BadRequestException(`phase is not allowed for dealer`)
-      }
+  /**
+   * Status/result filter for a phase; dealers only get their phases.
+   * For a dealer, LIVE leaves out the auctions they already bid on: those are
+   * their ACTIVE bids.
+   */
+  private async getClauseForPhase(
+    { role, sub }: JwtPayload,
+    phase: AuctionPhase,
+  ): Promise<FindOptionsWhere<Auction>> {
+    if (role === 'DEALER' && !DEALER_PHASES.has(phase)) {
+      throw new BadRequestException(`phase is not allowed for dealer`)
     }
 
     switch (phase) {
-      case undefined:
-        return {}
       case 'SCHEDULED':
-      case 'LIVE':
         return { status: phase }
-      case 'COMPLETED':
-        return { status: 'ENDED', result: Not(IsNull()) }
-      case 'REVIEW':
+      case 'LIVE': {
+        if (role === 'ADMIN') return { status: phase }
+
+        const myBids = await this.auctions.manager.find(Bid, {
+          select: { auctionId: true },
+          where: { dealerId: sub },
+        })
+        return {
+          status: phase,
+          id: Not(In(myBids.map(({ auctionId }) => auctionId))),
+        }
+      }
+      case 'SOLD':
+      case 'UNSOLD':
+        return { status: 'ENDED', result: phase }
+      case 'PENDING':
         return { status: 'ENDED', result: IsNull() }
     }
   }
@@ -199,7 +201,7 @@ function getBidStatus(
   isWinner: boolean,
 ): BidStatus {
   if (status !== 'ENDED') return 'ACTIVE'
-  if (result === null) return 'AWAITING_RESULT'
+  if (result === null) return 'PENDING'
   return isWinner ? 'WON' : 'NOT_WON'
 }
 

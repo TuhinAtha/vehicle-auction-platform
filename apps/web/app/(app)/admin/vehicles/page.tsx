@@ -16,13 +16,10 @@ export default async function AdminVehiclesPage() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Page>
-        <PageHeader>
-          <div className="flex items-center justify-between gap-4">
-            <h1 className="text-lg font-semibold">Vehicles</h1>
-            <Link href="/admin/vehicles/post" className={buttonVariants()}>
-              New vehicle
-            </Link>
-          </div>
+        <PageHeader breadcrumbs={[{ label: "Vehicles" }]}>
+          <Link href="/admin/vehicles/post" className={buttonVariants()}>
+            New vehicle
+          </Link>
         </PageHeader>
         <PageContent>
           <VehiclesContainer />

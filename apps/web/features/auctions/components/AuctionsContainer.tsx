@@ -5,7 +5,7 @@ import { AuctionCardGrid } from "@/features/auctions/components/AuctionCardGrid"
 import type { AuctionsQueryParams } from "../types"
 
 type AuctionsContainerProps = {
-  queryParams?: AuctionsQueryParams
+  queryParams: AuctionsQueryParams
 }
 
 export const AuctionsContainer = ({ queryParams }: AuctionsContainerProps) => {
@@ -22,5 +22,5 @@ export const AuctionsContainer = ({ queryParams }: AuctionsContainerProps) => {
     )
   }
 
-  return <AuctionCardGrid auctions={data} />
+  return <AuctionCardGrid auctions={data} phase={queryParams.phase} />
 }

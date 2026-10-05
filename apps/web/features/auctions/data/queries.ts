@@ -18,7 +18,7 @@ import { AUCTION_QUERY_KEYS } from "./queryKeys"
 export const getAuctionsQuery = ({
   queryParams,
 }: {
-  queryParams?: AuctionsQueryParams
+  queryParams: AuctionsQueryParams
 }) =>
   queryOptions({
     queryKey: AUCTION_QUERY_KEYS.list(queryParams),
@@ -46,7 +46,7 @@ export const getAuctionQuery = (id: string) =>
 export const getMyBidsQuery = ({
   queryParams,
 }: {
-  queryParams?: MyBidsQueryParams
+  queryParams: MyBidsQueryParams
 }) =>
   queryOptions({
     queryKey: AUCTION_QUERY_KEYS.myBids(queryParams),

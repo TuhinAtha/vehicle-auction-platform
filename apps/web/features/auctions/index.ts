@@ -1,6 +1,4 @@
 export { AuctionDetailContainer } from "./components/AuctionDetailContainer"
 export { AuctionsContainer } from "./components/AuctionsContainer"
 export { CreateAuctionForm } from "./components/CreateAuctionForm"
-export { MyBidPhaseFiltersContainer } from "./components/MyBidPhaseFiltersContainer"
 export { MyBidsContainer } from "./components/MyBidsContainer"
-export { PhaseFiltersContainer } from "./components/PhaseFiltersContainer"

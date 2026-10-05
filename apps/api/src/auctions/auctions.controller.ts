@@ -34,7 +34,7 @@ export class AuctionsController {
 
   @Get('counts')
   countByPhase(@CurrentUser() user: JwtPayload) {
-    return this.auctionsService.countByPhase(user.role)
+    return this.auctionsService.countByPhase(user)
   }
 
   @Get('my-bids')

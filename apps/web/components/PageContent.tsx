@@ -3,5 +3,9 @@ export const PageContent = ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  return <section>{children}</section>
+  return (
+    <section className="flex flex-col gap-4 p-6 text-sm leading-loose">
+      {children}
+    </section>
+  )
 }

@@ -2,6 +2,7 @@ import { Geist_Mono, Inter } from "next/font/google"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 
 import "./globals.css"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryProvider } from "@/providers/QueryProvider"
 import { ThemeProvider } from "@/providers/ThemeProvider"
 import { cn } from "@/lib/utils"
@@ -32,7 +33,9 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <NuqsAdapter>
-            <QueryProvider>{children}</QueryProvider>
+            <QueryProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </QueryProvider>
           </NuqsAdapter>
         </ThemeProvider>
       </body>

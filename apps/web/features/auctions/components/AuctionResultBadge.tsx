@@ -1,5 +1,5 @@
 import {
-  AUCTION_AWAITING_RESULT_BADGE,
+  AUCTION_PENDING_BADGE,
   AUCTION_RESULT_BADGE,
 } from "@/constants/auction.constant"
 import { AuctionResult } from "@repo/shared"
@@ -12,6 +12,6 @@ export const AuctionResultBadge = ({
 }) => {
   const { label, className } = result
     ? AUCTION_RESULT_BADGE[result]
-    : AUCTION_AWAITING_RESULT_BADGE
+    : AUCTION_PENDING_BADGE
   return <Badge className={className}>{label}</Badge>
 }

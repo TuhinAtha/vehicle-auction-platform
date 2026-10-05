@@ -22,7 +22,7 @@ export const AuctionCardDealer = ({
 }: {
   auction: AuctionSummaryDealer
 }) => {
-  const { vehicle, myBidAmount } = auction
+  const { vehicle } = auction
   const timing = getTiming(auction)
   const isLive = auction.status === "LIVE"
 
@@ -70,23 +70,11 @@ export const AuctionCardDealer = ({
       </CardContent>
       <CardFooter>
         {isLive ? (
-          <div className="grid w-full grid-cols-3 items-center gap-x-4">
-            {myBidAmount !== null && (
-              <dl>
-                <LabeledValue label="Your bid">
-                  {price.format(myBidAmount)}
-                </LabeledValue>
-              </dl>
-            )}
-            <span
-              className={buttonVariants({
-                size: "lg",
-                className: "col-start-3 justify-self-end",
-              })}
-            >
-              {myBidAmount === null ? "Bid now" : "Raise bid"}
-            </span>
-          </div>
+          <span
+            className={buttonVariants({ size: "lg", className: "ml-auto" })}
+          >
+            Bid now
+          </span>
         ) : (
           <dl>
             <LabeledValue label="Bidding">

@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-import { Button } from "@/components/ui/button"
+import { SidebarMenuButton } from "@/components/ui/sidebar"
 import { LOGIN_PATH } from "@/constants/path.constant"
 
 export const LogoutButton = () => {
@@ -19,9 +19,9 @@ export const LogoutButton = () => {
   }
 
   return (
-    <Button variant="ghost" size="sm" onClick={handleLogout} disabled={pending}>
+    <SidebarMenuButton onClick={handleLogout} disabled={pending}>
       <LogOut />
-      {pending ? "Logging out…" : "Log out"}
-    </Button>
+      <span>{pending ? "Logging out…" : "Log out"}</span>
+    </SidebarMenuButton>
   )
 }

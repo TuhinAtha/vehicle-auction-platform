@@ -1,30 +1,51 @@
 import { prefetchAuctions } from "@/features/auctions/server/prefetchAuctions"
 import type { SearchParams } from "@/types/next"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import { DEALER_AUCTION_PHASES } from "@repo/shared"
 import { Page } from "@/components/Page"
-import { PhaseFiltersContainer, AuctionsContainer } from "@/features/auctions"
+import { AuctionsContainer } from "@/features/auctions"
 import { getQueryClient } from "@/lib/query-client"
-import { loadAuctionsSearchParams } from "@/features/auctions/searchParams"
+import {
+  loadAuctionsSearchParams,
+  serializeAuctionsSearchParams,
+} from "@/features/auctions/searchParams"
 import { PageHeader } from "@/components/PageHeader"
 import { PageContent } from "@/components/PageContent"
+import {
+  AUCTION_PHASE_LABEL,
+  DEFAULT_AUCTION_PHASE,
+} from "@/constants/auction.constant"
+import { redirect } from "next/navigation"
+import { DEALER_AUCTION_PHASES } from "@repo/shared"
 
 export default async function DealerAuctionsPage({
   searchParams,
 }: {
   searchParams: SearchParams
 }) {
-  const queryParams = await loadAuctionsSearchParams(searchParams)
+  const loaded = await loadAuctionsSearchParams(searchParams)
+  const phase = DEALER_AUCTION_PHASES.find(
+    (dealerPhase) => dealerPhase === loaded.phase
+  )
+  if (!phase) {
+    redirect(
+      serializeAuctionsSearchParams("/dealer/auctions", {
+        phase: DEFAULT_AUCTION_PHASE,
+      })
+    )
+  }
+  const queryParams = { phase }
   const queryClient = getQueryClient()
   await prefetchAuctions(queryClient, queryParams)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Page>
-        <PageHeader>
-          <h1 className="text-lg font-semibold">Auctions</h1>
-          <PhaseFiltersContainer items={[...DEALER_AUCTION_PHASES]} />
-        </PageHeader>
+        <PageHeader
+          breadcrumbs={[
+            { label: "Auctions" },
+            { label: AUCTION_PHASE_LABEL[phase] },
+          ]}
+        />
         <PageContent>
           <AuctionsContainer queryParams={queryParams} />
         </PageContent>

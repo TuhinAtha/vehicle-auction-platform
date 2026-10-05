@@ -15,9 +15,9 @@ export default async function NewAuctionPage() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Page>
-        <PageHeader>
-          <h1 className="text-lg font-semibold">New auction</h1>
-        </PageHeader>
+        <PageHeader
+          breadcrumbs={[{ label: "Auctions" }, { label: "New auction" }]}
+        />
         <PageContent>
           <CreateAuctionForm />
         </PageContent>

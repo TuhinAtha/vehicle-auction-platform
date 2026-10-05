@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DEFAULT_AUCTION_PHASE } from "@/constants/auction.constant"
 import { ApiError } from "@/lib/http"
 import { RecentVehicleCards } from "@/features/vehicles/components/RecentVehicleCards"
 import { VehicleFields } from "@/features/vehicles/components/VehicleFields"
@@ -25,6 +26,7 @@ import { VEHICLE_QUERY_KEYS } from "@/features/vehicles/data/queryKeys"
 import { createAuction } from "../data/mutations"
 import { AUCTION_QUERY_KEYS } from "../data/queryKeys"
 import { FillRandomAuctionButton } from "../dev/FillRandomAuctionButton"
+import { serializeAuctionsSearchParams } from "../searchParams"
 import { useAuctionAndVehicleForm } from "../hooks/useAuctionAndVehicleForm"
 import type { CreateAuctionFormValues } from "../lib/createAuctionFormSchema"
 import { AuctionFields } from "./AuctionFields"
@@ -71,7 +73,9 @@ export const CreateAuctionForm = () => {
       queryClient.invalidateQueries({ queryKey: AUCTION_QUERY_KEYS.all }),
       queryClient.invalidateQueries({ queryKey: VEHICLE_QUERY_KEYS.all }),
     ])
-    router.push(AUCTIONS_PATH)
+    router.push(
+      serializeAuctionsSearchParams(AUCTIONS_PATH, { phase: "SCHEDULED" })
+    )
   }
 
   return (
@@ -116,7 +120,9 @@ export const CreateAuctionForm = () => {
         <div className="flex justify-end gap-2">
           <FillRandomAuctionButton />
           <Link
-            href={AUCTIONS_PATH}
+            href={serializeAuctionsSearchParams(AUCTIONS_PATH, {
+              phase: DEFAULT_AUCTION_PHASE,
+            })}
             className={buttonVariants({ variant: "outline" })}
           >
             Cancel

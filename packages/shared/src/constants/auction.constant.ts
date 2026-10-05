@@ -6,10 +6,11 @@ export const AUCTION_STATUSES = ['SCHEDULED', 'LIVE', 'ENDED'] as const
 export const AUCTION_RESULTS = ['SOLD', 'UNSOLD'] as const
 
 export const AUCTION_PHASES = [
-  'REVIEW', // // ENDED + NO RESULT
+  'PENDING', // ENDED + NO RESULT
   'LIVE',
   'SCHEDULED',
-  'COMPLETED', // ENDED + SOLD/UNSOLD
+  'SOLD', // ENDED + SOLD
+  'UNSOLD', // ENDED + UNSOLD
 ] as const
 
 export const DEALER_AUCTION_PHASES = [

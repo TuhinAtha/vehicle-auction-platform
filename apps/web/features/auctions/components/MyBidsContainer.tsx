@@ -9,7 +9,7 @@ import { MyBidCard } from "./MyBidCard"
 export const MyBidsContainer = ({
   queryParams,
 }: {
-  queryParams?: MyBidsQueryParams
+  queryParams: MyBidsQueryParams
 }) => {
   const { data, isPending, isError } = useMyBids(queryParams)
 

@@ -57,8 +57,6 @@ export interface AuctionSummaryDealer extends Omit<
   DealerAuctionExcludedField
 > {
   vehicle: Vehicle
-  /** The dealer's own highest bid amount, if any */
-  myBidAmount: number | null
 }
 
 export interface AuctionSummaryMyBid extends Omit<

@@ -2,14 +2,17 @@ import type { AuctionSummaryAdmin, AuctionSummaryDealer } from "@repo/shared"
 import Link from "next/link"
 
 import { useUser } from "@/providers/UserProvider"
-import type { AuctionSummary } from "../types"
+import { serializeAuctionsSearchParams } from "../searchParams"
+import type { AuctionsQueryParams, AuctionSummary } from "../types"
 import { AuctionCardAdmin } from "./AuctionCardAdmin"
 import { AuctionCardDealer } from "./AuctionCardDealer"
 
 export const AuctionCardGrid = ({
   auctions,
+  phase,
 }: {
   auctions: AuctionSummary[]
+  phase: AuctionsQueryParams["phase"]
 }) => {
   const { role } = useUser()
 
@@ -22,15 +25,25 @@ export const AuctionCardGrid = ({
   }
 
   return (
-    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
       {auctions.map((auction) => (
         <li key={auction.id}>
           {role === "DEALER" ? (
-            <Link href={`/dealer/auctions/${auction.id}`}>
+            <Link
+              href={serializeAuctionsSearchParams(
+                `/dealer/auctions/${auction.id}`,
+                { phase }
+              )}
+            >
               <AuctionCardDealer auction={auction as AuctionSummaryDealer} />
             </Link>
           ) : (
-            <Link href={`/admin/auctions/${auction.id}`}>
+            <Link
+              href={serializeAuctionsSearchParams(
+                `/admin/auctions/${auction.id}`,
+                { phase }
+              )}
+            >
               <AuctionCardAdmin auction={auction as AuctionSummaryAdmin} />
             </Link>
           )}
