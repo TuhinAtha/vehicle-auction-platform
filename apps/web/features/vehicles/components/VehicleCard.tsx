@@ -9,9 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { distance } from "@/lib/intl"
+import { VehiclePhoto } from "./VehiclePhoto"
 
 export const VehicleCard = ({ vehicle }: { vehicle: Vehicle }) => (
-  <Card className="h-full">
+  <Card className="h-full pt-0">
+    <VehiclePhoto vehicle={vehicle} />
     <CardHeader>
       <CardTitle className="truncate">
         {vehicle.make} {vehicle.model}
