@@ -2,6 +2,7 @@
 
 import { type AuctionDetailDealer, getMinimumBid } from "@repo/shared"
 import { useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import { useController } from "react-hook-form"
 
 import { NumberStepper } from "@/components/NumberStepper"
@@ -15,19 +16,20 @@ import {
 } from "@/components/ui/field"
 import { ApiError } from "@/lib/http"
 import { price } from "@/lib/intl"
-import { placeBid } from "../data/mutations"
+import { placeBid, raiseBid } from "../data/mutations"
 import { AUCTION_QUERY_KEYS } from "../data/queryKeys"
 import { usePlaceBidForm } from "../hooks/usePlaceBidForm"
+import { serializeMyBidsSearchParams } from "../searchParams"
 import type { PlaceBidFormValues } from "../lib/placeBidFormSchema"
 
 export const PlaceBidForm = ({ auction }: { auction: AuctionDetailDealer }) => {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const { myBid, minIncrement } = auction
   const minimum = getMinimumBid(auction, myBid?.amount ?? null)
   const {
     control,
     handleSubmit,
-    reset,
     setError,
     formState: { errors, isSubmitting },
   } = usePlaceBidForm(minimum)
@@ -35,7 +37,7 @@ export const PlaceBidForm = ({ auction }: { auction: AuctionDetailDealer }) => {
 
   const onSubmit = async ({ amount }: PlaceBidFormValues) => {
     try {
-      await placeBid(auction.id, amount)
+      await (myBid ? raiseBid : placeBid)(auction.id, amount)
     } catch (error) {
       setError("root", {
         message:
@@ -47,7 +49,9 @@ export const PlaceBidForm = ({ auction }: { auction: AuctionDetailDealer }) => {
     }
 
     await queryClient.invalidateQueries({ queryKey: AUCTION_QUERY_KEYS.all })
-    reset({ amount: getMinimumBid(auction, amount) })
+    router.push(
+      serializeMyBidsSearchParams("/dealer/mybids", { phase: "ACTIVE" })
+    )
   }
 
   return (

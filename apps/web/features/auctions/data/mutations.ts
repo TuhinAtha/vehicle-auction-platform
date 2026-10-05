@@ -27,7 +27,14 @@ export function createAuction(vehicleId: string, values: AuctionFormValues) {
 }
 
 export function placeBid(auctionId: string, amount: number) {
-  return fetchBff<Bid>(AUCTION_ENDPOINTS.bids(auctionId), {
+  return fetchBff<Bid>(AUCTION_ENDPOINTS.placeBid(auctionId), {
+    method: "POST",
+    body: { amount } satisfies CreateBidInput,
+  })
+}
+
+export function raiseBid(auctionId: string, amount: number) {
+  return fetchBff<Bid>(AUCTION_ENDPOINTS.raiseBid(auctionId), {
     method: "POST",
     body: { amount } satisfies CreateBidInput,
   })
