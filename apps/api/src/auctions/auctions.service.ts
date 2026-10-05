@@ -126,7 +126,29 @@ export class AuctionsService {
       where: { auctionId: id, dealerId: viewer.sub },
       order: { amount: 'DESC' },
     })
-    return { ...auction, myBid }
+    const { result, winningBid } = await this.auctions.findOneOrFail({
+      select: { id: true, result: true },
+      where: { id },
+      relations: { winningBid: true },
+    })
+    return {
+      ...auction,
+      myBid,
+      bidStatus: myBid
+        ? getBidStatus(
+            { status: auction.status, result },
+            winningBid?.dealerId === viewer.sub,
+          )
+        : null,
+    }
+  }
+
+  async findMyBid(id: string, dealer: JwtPayload) {
+    const auction = await this.findOneFor(id, dealer)
+    if (!('bidStatus' in auction) || auction.bidStatus === null) {
+      throw new NotFoundException(`No bid on auction ${id}`)
+    }
+    return auction
   }
 
   /**

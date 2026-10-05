@@ -42,6 +42,8 @@ export interface AuctionDetailDealer extends Omit<
   vehicle: Vehicle
   /** The dealer's own highest bid, if any */
   myBid: Bid | null
+  /** The dealer's status on this auction; null if they have not bid */
+  bidStatus: BidStatus | null
 }
 
 /** GET /auctions as an admin. */

@@ -6,4 +6,6 @@ export const AUCTION_QUERY_KEYS = {
   myBids: (options?: unknown) =>
     [...AUCTION_QUERY_KEYS.all, "my-bids", options] as const,
   myBidCounts: () => [...AUCTION_QUERY_KEYS.all, "my-bids", "counts"] as const,
+  myBid: (id: string) =>
+    [...AUCTION_QUERY_KEYS.all, "my-bids", "detail", id] as const,
 }

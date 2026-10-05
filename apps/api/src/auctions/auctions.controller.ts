@@ -52,6 +52,15 @@ export class AuctionsController {
     return this.auctionsService.countMyBids(user.sub)
   }
 
+  @Get('my-bids/:id')
+  @Role('DEALER')
+  findMyBid(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.auctionsService.findMyBid(id, user)
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseUUIDPipe) id: string,

@@ -1,5 +1,6 @@
 "use client"
 
+import { LoadError } from "@/components/LoadError"
 import { useAuctions } from "@/features/auctions/hooks/useAuctions"
 import { AuctionCardGrid } from "@/features/auctions/components/AuctionCardGrid"
 import type { AuctionsQueryParams } from "../types"
@@ -15,11 +16,7 @@ export const AuctionsContainer = ({ queryParams }: AuctionsContainerProps) => {
     return <p className="text-sm text-muted-foreground">Loading auctions…</p>
   }
   if (isError) {
-    return (
-      <p role="alert" className="text-sm text-destructive">
-        Couldn&apos;t load auctions. Please try again.
-      </p>
-    )
+    return <LoadError>Couldn&apos;t load auctions. Please try again.</LoadError>
   }
 
   return <AuctionCardGrid auctions={data} phase={queryParams.phase} />

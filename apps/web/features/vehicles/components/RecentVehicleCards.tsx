@@ -1,5 +1,6 @@
 "use client"
 
+import { LoadError } from "@/components/LoadError"
 import { useController } from "react-hook-form"
 
 import {
@@ -27,11 +28,7 @@ export const RecentVehicleCards = () => {
     return <p className="text-sm text-muted-foreground">Loading vehicles…</p>
   }
   if (isError) {
-    return (
-      <p role="alert" className="text-sm text-destructive">
-        Couldn&apos;t load vehicles. Please try again.
-      </p>
-    )
+    return <LoadError>Couldn&apos;t load vehicles. Please try again.</LoadError>
   }
   if (data.length === 0) {
     return (

@@ -1,4 +1,5 @@
 import type {
+  AuctionDetailDealer,
   AuctionPhaseCounts,
   AuctionSummaryMyBid,
   BidStatusCounts,
@@ -62,4 +63,11 @@ export const getBidStatusCountsQuery = () =>
     queryKey: AUCTION_QUERY_KEYS.myBidCounts(),
     queryFn: ({ signal }) =>
       fetchBff<BidStatusCounts>(AUCTION_ENDPOINTS.myBidCounts, { signal }),
+  })
+
+export const getMyBidQuery = (id: string) =>
+  queryOptions({
+    queryKey: AUCTION_QUERY_KEYS.myBid(id),
+    queryFn: ({ signal }) =>
+      fetchBff<AuctionDetailDealer>(AUCTION_ENDPOINTS.myBid(id), { signal }),
   })

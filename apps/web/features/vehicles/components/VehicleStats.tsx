@@ -8,9 +8,10 @@ export const VehicleStats = ({ vehicle }: { vehicle: Vehicle }) => {
   const soh = `${vehicle.batterySohPercent} %`
   const usableKwh =
     (vehicle.batteryCapacityKwh * vehicle.batterySohPercent) / 100
+  const adjustedRangeKm = (vehicle.rangeKm * vehicle.batterySohPercent) / 100
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <StatCard label="Battery state of health" value={soh}>
         <Progress
           value={vehicle.batterySohPercent}
@@ -26,6 +27,9 @@ export const VehicleStats = ({ vehicle }: { vehicle: Vehicle }) => {
       </StatCard>
       <StatCard label="Mileage" value={distance.format(vehicle.mileage)}>
         First registered {vehicle.registrationDate.slice(0, 4)}
+      </StatCard>
+      <StatCard label="Range" value={distance.format(vehicle.rangeKm)}>
+        ≈ {distance.format(adjustedRangeKm)} at {soh} health
       </StatCard>
     </div>
   )

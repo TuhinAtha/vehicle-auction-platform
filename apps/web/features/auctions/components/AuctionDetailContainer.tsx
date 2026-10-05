@@ -1,5 +1,6 @@
 "use client"
 
+import { LoadError } from "@/components/LoadError"
 import type { AuctionDetailAdmin, AuctionDetailDealer } from "@repo/shared"
 
 import { useUser } from "@/providers/UserProvider"
@@ -16,9 +17,7 @@ export const AuctionDetailContainer = ({ id }: { id: string }) => {
   }
   if (isError) {
     return (
-      <p role="alert" className="text-sm text-destructive">
-        Couldn&apos;t load the auction. Please try again.
-      </p>
+      <LoadError>Couldn&apos;t load the auction. Please try again.</LoadError>
     )
   }
 

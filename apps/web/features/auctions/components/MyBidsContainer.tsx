@@ -1,8 +1,10 @@
 "use client"
 
+import { LoadError } from "@/components/LoadError"
 import Link from "next/link"
 
 import { useMyBids } from "../hooks/useMyBids"
+import { serializeMyBidsSearchParams } from "../searchParams"
 import type { MyBidsQueryParams } from "../types"
 import { MyBidCard } from "./MyBidCard"
 
@@ -18,9 +20,7 @@ export const MyBidsContainer = ({
   }
   if (isError) {
     return (
-      <p role="alert" className="text-sm text-destructive">
-        Couldn&apos;t load your bids. Please try again.
-      </p>
+      <LoadError>Couldn&apos;t load your bids. Please try again.</LoadError>
     )
   }
   if (data.length === 0) {
@@ -35,7 +35,11 @@ export const MyBidsContainer = ({
     <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {data.map((auction) => (
         <li key={auction.id}>
-          <Link href={`/dealer/auctions/${auction.id}`}>
+          <Link
+            href={serializeMyBidsSearchParams(`/dealer/mybids/${auction.id}`, {
+              phase: queryParams.phase,
+            })}
+          >
             <MyBidCard auction={auction} />
           </Link>
         </li>
