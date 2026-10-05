@@ -4,27 +4,17 @@ import { CurrentUser, Role } from '../auth/decorators.js'
 import { BidsService } from './bids.service.js'
 import { CreateBidDto } from './dto/create-bid.dto.js'
 
-@Controller('auctions/:auctionId')
+@Controller('auctions/:auctionId/bids')
 export class BidsController {
   constructor(private readonly bidsService: BidsService) {}
 
-  @Post('place-bid')
+  @Post()
   @Role('DEALER')
-  place(
+  create(
     @Param('auctionId', ParseUUIDPipe) auctionId: string,
     @Body() { amount }: CreateBidDto,
     @CurrentUser() user: JwtPayload,
   ) {
-    return this.bidsService.place(auctionId, user.sub, amount)
-  }
-
-  @Post('raise-bid')
-  @Role('DEALER')
-  raise(
-    @Param('auctionId', ParseUUIDPipe) auctionId: string,
-    @Body() { amount }: CreateBidDto,
-    @CurrentUser() user: JwtPayload,
-  ) {
-    return this.bidsService.raise(auctionId, user.sub, amount)
+    return this.bidsService.create(auctionId, user.sub, amount)
   }
 }

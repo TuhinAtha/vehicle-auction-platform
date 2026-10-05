@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
@@ -95,6 +96,40 @@ export class AuctionsService {
       order: { amount: 'DESC' },
     })
     return { ...auction, myBid }
+  }
+
+  /**
+   * The highest bid wins if it reaches the reserve; on a tie, the earlier one.
+   */
+  async confirmSold(id: string) {
+    const auction = await this.findPending(id)
+    const winningBid = await this.auctions.manager.findOne(Bid, {
+      where: { auctionId: id },
+      order: { amount: 'DESC', createdAt: 'ASC' },
+    })
+    if (!winningBid) throw new ConflictException(`Auction ${id} has no bids`)
+    if (winningBid.amount < auction.reservePrice)
+      throw new ConflictException(`Highest bid is below the reserve price`)
+
+    await this.auctions.update(id, {
+      result: 'SOLD',
+      winningBidId: winningBid.id,
+    })
+    return this.findOne(id)
+  }
+
+  async markUnsold(id: string) {
+    await this.findPending(id)
+    await this.auctions.update(id, { result: 'UNSOLD' })
+    return this.findOne(id)
+  }
+
+  private async findPending(id: string) {
+    const auction = await this.findOne(id)
+    if (auction.status !== 'ENDED' || auction.result !== null) {
+      throw new ConflictException(`Auction ${id} is not awaiting a result`)
+    }
+    return auction
   }
 
   /** Number of auctions in each phase the viewer can see. */

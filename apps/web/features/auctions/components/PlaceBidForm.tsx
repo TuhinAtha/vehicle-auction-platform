@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/field"
 import { ApiError } from "@/lib/http"
 import { price } from "@/lib/intl"
-import { placeBid, raiseBid } from "../data/mutations"
+import { placeBid } from "../data/mutations"
 import { AUCTION_QUERY_KEYS } from "../data/queryKeys"
 import { usePlaceBidForm } from "../hooks/usePlaceBidForm"
 import { serializeMyBidsSearchParams } from "../searchParams"
@@ -37,7 +37,7 @@ export const PlaceBidForm = ({ auction }: { auction: AuctionDetailDealer }) => {
 
   const onSubmit = async ({ amount }: PlaceBidFormValues) => {
     try {
-      await (myBid ? raiseBid : placeBid)(auction.id, amount)
+      await placeBid(auction.id, amount)
     } catch (error) {
       setError("root", {
         message:

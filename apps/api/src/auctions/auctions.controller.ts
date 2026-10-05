@@ -59,4 +59,16 @@ export class AuctionsController {
   ) {
     return this.auctionsService.findOneFor(id, user)
   }
+
+  @Post(':id/confirm-sold')
+  @Role('ADMIN')
+  confirmSold(@Param('id', ParseUUIDPipe) id: string) {
+    return this.auctionsService.confirmSold(id)
+  }
+
+  @Post(':id/mark-unsold')
+  @Role('ADMIN')
+  markUnsold(@Param('id', ParseUUIDPipe) id: string) {
+    return this.auctionsService.markUnsold(id)
+  }
 }

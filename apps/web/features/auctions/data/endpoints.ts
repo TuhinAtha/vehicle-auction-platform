@@ -4,6 +4,7 @@ export const AUCTION_ENDPOINTS = {
   myBids: "/auctions/my-bids",
   myBidCounts: "/auctions/my-bids/counts",
   detail: (id: string) => `/auctions/${id}`,
-  placeBid: (id: string) => `/auctions/${id}/place-bid`,
-  raiseBid: (id: string) => `/auctions/${id}/raise-bid`,
+  bids: (id: string) => `/auctions/${id}/bids`,
+  confirmSold: (id: string) => `/auctions/${id}/confirm-sold`,
+  markUnsold: (id: string) => `/auctions/${id}/mark-unsold`,
 } as const

@@ -4,7 +4,7 @@ import { maxBy } from "es-toolkit"
 import { LabeledValue } from "@/components/LabeledValue"
 import { Card, CardContent } from "@/components/ui/card"
 import { price } from "@/lib/intl"
-import { AuctionReviewAlert } from "./AuctionReviewAlert"
+import { AuctionReview } from "./AuctionReview"
 import { AuctionTiming } from "./AuctionTiming"
 
 export const AuctionSideCardAdmin = ({
@@ -52,7 +52,7 @@ export const AuctionSideCardAdmin = ({
         )}
 
         {auction.status === "ENDED" && auction.result === null && (
-          <AuctionReviewAlert auction={auction} highestBid={highestBid} />
+          <AuctionReview auction={auction} highestBid={highestBid} />
         )}
       </CardContent>
     </Card>
