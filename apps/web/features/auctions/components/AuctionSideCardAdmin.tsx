@@ -1,5 +1,4 @@
 import type { AuctionDetailAdmin } from "@repo/shared"
-import { maxBy } from "es-toolkit"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import { Card, CardContent } from "@/components/ui/card"
@@ -12,7 +11,7 @@ export const AuctionSideCardAdmin = ({
 }: {
   auction: AuctionDetailAdmin
 }) => {
-  const highestBid = maxBy(auction.bids, (bid) => bid.amount) ?? null
+  const highestBid = auction.bids.at(0) ?? null
 
   return (
     <Card className="lg:sticky lg:top-18">
@@ -38,7 +37,7 @@ export const AuctionSideCardAdmin = ({
               {highestBid ? price.format(highestBid.amount) : "None"}
             </p>
             {highestBid &&
-              (highestBid.amount >= auction.reservePrice ? (
+              (auction.potentialWinningBid ? (
                 <p className="text-xs font-medium text-green-700 dark:text-green-300">
                   Reserve met
                 </p>

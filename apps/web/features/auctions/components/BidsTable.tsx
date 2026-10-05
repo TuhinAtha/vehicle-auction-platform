@@ -1,5 +1,4 @@
 import type { AuctionDetailAdmin } from "@repo/shared"
-import { orderBy } from "es-toolkit"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -13,7 +12,7 @@ import {
 import { price, shortDatetime } from "@/lib/intl"
 
 export const BidsTable = ({ auction }: { auction: AuctionDetailAdmin }) => {
-  const bids = orderBy(auction.bids, ["amount"], ["desc"])
+  const { bids } = auction
 
   return (
     <Card>

@@ -31,6 +31,7 @@ export interface Auction {
 export interface AuctionDetailAdmin extends Auction {
   vehicle: Vehicle
   bids: BidWithDealer[]
+  potentialWinningBid: BidWithDealer | null
 }
 
 /** GET /auctions/:id as a dealer: the excluded fields stay hidden. */

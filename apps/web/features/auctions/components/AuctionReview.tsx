@@ -15,9 +15,8 @@ export const AuctionReview = ({
   auction: AuctionDetailAdmin
   highestBid: BidWithDealer | null
 }) => {
+  const { potentialWinningBid } = auction
   const reserve = price.format(auction.reservePrice)
-  const isReserveMet =
-    highestBid !== null && highestBid.amount >= auction.reservePrice
   const {
     mutate: saveResult,
     isPending,
@@ -34,7 +33,7 @@ export const AuctionReview = ({
             <>
               Highest bid: {price.format(highestBid.amount)} from{" "}
               {highestBid.dealer.name}.{" "}
-              {isReserveMet
+              {potentialWinningBid
                 ? `This meets the reserve of ${reserve}.`
                 : `This is ${price.format(auction.reservePrice - highestBid.amount)} below the reserve of ${reserve}.`}
             </>
@@ -44,7 +43,7 @@ export const AuctionReview = ({
         </AlertDescription>
       </Alert>
       <div className="flex flex-col gap-2">
-        {isReserveMet && (
+        {potentialWinningBid && (
           <Button
             type="button"
             size="lg"
@@ -54,7 +53,7 @@ export const AuctionReview = ({
           >
             {isPending && savingResult === "SOLD"
               ? "Saving…"
-              : `Confirm sold · ${price.format(highestBid.amount)}`}
+              : `Confirm sold · ${price.format(potentialWinningBid.amount)}`}
           </Button>
         )}
         <Button

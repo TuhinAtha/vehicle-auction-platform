@@ -33,6 +33,8 @@ import { Auction } from './entities/auction.entity.js'
 
 const DEALER_HIDDEN = new Set<string>(DEALER_AUCTION_EXCLUDED_FIELDS)
 const DEALER_PHASES = new Set<AuctionPhase>(DEALER_AUCTION_PHASES)
+/** The highest bid wins; on a tie, the earlier one. */
+const WINNING_BID_ORDER = { amount: 'DESC', createdAt: 'ASC' } as const
 
 @Injectable()
 export class AuctionsService {
@@ -86,10 +88,19 @@ export class AuctionsService {
       select: this.selectFor(viewer.role),
       where: { id },
       relations: { vehicle: true, bids: isAdmin ? { dealer: true } : false },
-      order: isAdmin ? { bids: { createdAt: 'DESC' } } : undefined,
+      order: isAdmin ? { bids: WINNING_BID_ORDER } : undefined,
     })
     if (!auction) throw new NotFoundException(`Auction ${id} not found`)
-    if (isAdmin) return auction
+    if (isAdmin) {
+      const highestBid = auction.bids.at(0)
+      return {
+        ...auction,
+        potentialWinningBid:
+          highestBid && highestBid.amount >= auction.reservePrice
+            ? highestBid
+            : null,
+      }
+    }
 
     const myBid = await this.auctions.manager.findOne(Bid, {
       where: { auctionId: id, dealerId: viewer.sub },
@@ -105,7 +116,7 @@ export class AuctionsService {
     const auction = await this.findPending(id)
     const winningBid = await this.auctions.manager.findOne(Bid, {
       where: { auctionId: id },
-      order: { amount: 'DESC', createdAt: 'ASC' },
+      order: WINNING_BID_ORDER,
     })
     if (!winningBid) throw new ConflictException(`Auction ${id} has no bids`)
     if (winningBid.amount < auction.reservePrice)
