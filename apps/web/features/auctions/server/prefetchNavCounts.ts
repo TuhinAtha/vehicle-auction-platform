@@ -2,9 +2,12 @@ import type {
   AuctionPhaseCounts,
   BidStatusCounts,
   UserRole,
+  VehicleAvailabilityCounts,
 } from "@repo/shared"
 import type { QueryClient } from "@tanstack/react-query"
 
+import { VEHICLE_ENDPOINTS } from "@/features/vehicles/data/endpoints"
+import { getVehicleAvailabilityCountsQuery } from "@/features/vehicles/data/queries"
 import { fetchApi } from "@/lib/fetch-api"
 import { AUCTION_ENDPOINTS } from "../data/endpoints"
 import {
@@ -30,6 +33,15 @@ export async function prefetchNavCounts(
           ...getBidStatusCountsQuery(),
           queryFn: () =>
             fetchApi<BidStatusCounts>(AUCTION_ENDPOINTS.myBidCounts),
+        })
+        .catch(() => undefined),
+
+    role === "ADMIN" &&
+      queryClient
+        .query({
+          ...getVehicleAvailabilityCountsQuery(),
+          queryFn: () =>
+            fetchApi<VehicleAvailabilityCounts>(VEHICLE_ENDPOINTS.counts),
         })
         .catch(() => undefined),
   ])

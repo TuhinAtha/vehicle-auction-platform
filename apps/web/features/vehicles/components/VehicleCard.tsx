@@ -1,20 +1,31 @@
-import type { Vehicle } from "@repo/shared"
+import type { Vehicle, VehicleAvailability } from "@repo/shared"
 
 import { LabeledValue } from "@/components/LabeledValue"
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { distance } from "@/lib/intl"
+import { VehicleAvailabilityBadge } from "./VehicleAvailabilityBadge"
 import { VehiclePhoto } from "./VehiclePhoto"
 
-export const VehicleCard = ({ vehicle }: { vehicle: Vehicle }) => (
+export const VehicleCard = ({
+  vehicle,
+  availability,
+}: {
+  vehicle: Vehicle
+  availability: VehicleAvailability
+}) => (
   <Card className="h-full pt-0">
     <VehiclePhoto vehicle={vehicle} />
     <CardHeader>
+      <CardAction>
+        <VehicleAvailabilityBadge availability={availability} />
+      </CardAction>
       <CardTitle className="truncate">
         {vehicle.make} {vehicle.model}
       </CardTitle>

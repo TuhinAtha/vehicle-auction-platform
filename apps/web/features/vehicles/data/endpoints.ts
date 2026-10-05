@@ -1,5 +1,5 @@
 export const VEHICLE_ENDPOINTS = {
   root: "/vehicles",
-  available: "/vehicles/available",
+  counts: "/vehicles/counts",
   photos: "/vehicles/photos",
 } as const

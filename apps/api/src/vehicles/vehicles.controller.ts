@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Body,
-  ParseIntPipe,
   Query,
   UploadedFile,
   UseInterceptors,
@@ -14,6 +13,7 @@ import { VEHICLE_PHOTOS_PATH } from '@repo/shared'
 import { Role } from '../auth/decorators.js'
 import { VehiclesService } from './vehicles.service.js'
 import { CreateVehicleDto } from './dto/create-vehicle.dto.js'
+import { ListVehiclesQueryDto } from './dto/list-vehicles-query.dto.js'
 import { vehiclePhotoUpload } from './vehicle-photo-upload.js'
 
 @Controller('vehicles')
@@ -36,15 +36,13 @@ export class VehiclesController {
 
   @Get()
   @Role('ADMIN')
-  findAll() {
-    return this.vehiclesService.findAll()
+  findAll(@Query() { availability, limit }: ListVehiclesQueryDto) {
+    return this.vehiclesService.findAll(availability, limit)
   }
 
-  @Get('available')
+  @Get('counts')
   @Role('ADMIN')
-  findAvailable(
-    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
-  ) {
-    return this.vehiclesService.findAvailable(limit)
+  countByAvailability() {
+    return this.vehiclesService.countByAvailability()
   }
 }

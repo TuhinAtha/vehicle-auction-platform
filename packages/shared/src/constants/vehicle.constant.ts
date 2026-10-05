@@ -13,3 +13,9 @@ export const VEHICLE_PHOTO_TYPES: Record<string, string> = {
   'image/png': 'png',
   'image/webp': 'webp',
 }
+
+export const VEHICLE_AVAILABILITIES = [
+  'UNLISTED', // never been in an auction
+  'SOLD', // an auction with result SOLD
+  'UNSOLD', // all its auctions ended UNSOLD
+] as const

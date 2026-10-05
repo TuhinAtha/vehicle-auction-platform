@@ -5,12 +5,15 @@ import { PageContent } from "@/components/PageContent"
 import { PageHeader } from "@/components/PageHeader"
 import { CreateAuctionForm } from "@/features/auctions"
 import { RECENT_VEHICLES_LIMIT } from "@/features/vehicles/data/constants"
-import { prefetchAvailableVehicles } from "@/features/vehicles/server/prefetchAvailableVehicles"
+import { prefetchVehicles } from "@/features/vehicles/server/prefetchVehicles"
 import { getQueryClient } from "@/lib/query-client"
 
 export default async function NewAuctionPage() {
   const queryClient = getQueryClient()
-  await prefetchAvailableVehicles(queryClient, RECENT_VEHICLES_LIMIT)
+  await prefetchVehicles(queryClient, {
+    availability: "UNLISTED",
+    limit: RECENT_VEHICLES_LIMIT,
+  })
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

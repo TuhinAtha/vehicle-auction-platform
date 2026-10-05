@@ -4,12 +4,17 @@ import type { QueryClient } from "@tanstack/react-query"
 import { fetchApi } from "@/lib/fetch-api"
 import { VEHICLE_ENDPOINTS } from "../data/endpoints"
 import { getVehiclesQuery } from "../data/queries"
+import type { VehiclesQueryParams } from "../types"
 
-export async function prefetchVehicles(queryClient: QueryClient) {
+export async function prefetchVehicles(
+  queryClient: QueryClient,
+  queryParams: VehiclesQueryParams
+) {
   await queryClient
     .query({
-      ...getVehiclesQuery(),
-      queryFn: () => fetchApi<Vehicle[]>(VEHICLE_ENDPOINTS.root),
+      ...getVehiclesQuery({ queryParams }),
+      queryFn: () =>
+        fetchApi<Vehicle[]>(VEHICLE_ENDPOINTS.root, { queryParams }),
     })
     .catch(() => undefined)
 }

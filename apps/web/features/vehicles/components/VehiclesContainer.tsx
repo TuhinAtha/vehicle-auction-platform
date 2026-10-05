@@ -1,10 +1,14 @@
 "use client"
 
 import { useVehicles } from "../hooks/useVehicles"
+import { VehiclesQueryParams } from "../types"
 import { VehicleCardGrid } from "./VehicleCardGrid"
 
-export const VehiclesContainer = () => {
-  const { data, isPending, isError } = useVehicles()
+type VehiclesContainerProps = {
+  queryParams: VehiclesQueryParams
+}
+export const VehiclesContainer = ({ queryParams }: VehiclesContainerProps) => {
+  const { data, isPending, isError } = useVehicles({ queryParams })
 
   if (isPending) {
     return <p className="text-sm text-muted-foreground">Loading vehicles…</p>
@@ -17,5 +21,7 @@ export const VehiclesContainer = () => {
     )
   }
 
-  return <VehicleCardGrid vehicles={data} />
+  return (
+    <VehicleCardGrid vehicles={data} availability={queryParams.availability} />
+  )
 }

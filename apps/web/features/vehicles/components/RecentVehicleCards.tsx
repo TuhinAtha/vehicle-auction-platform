@@ -13,15 +13,15 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { distance } from "@/lib/intl"
 import { RECENT_VEHICLES_LIMIT } from "../data/constants"
-import { useAvailableVehicles } from "../hooks/useAvailableVehicles"
+import { useVehicles } from "../hooks/useVehicles"
 
 export const RecentVehicleCards = () => {
   const { field, fieldState } = useController<{ vehicleId: string }>({
     name: "vehicleId",
   })
-  const { data, isPending, isError } = useAvailableVehicles(
-    RECENT_VEHICLES_LIMIT
-  )
+  const { data, isPending, isError } = useVehicles({
+    queryParams: { availability: "UNLISTED", limit: RECENT_VEHICLES_LIMIT },
+  })
 
   if (isPending) {
     return <p className="text-sm text-muted-foreground">Loading vehicles…</p>

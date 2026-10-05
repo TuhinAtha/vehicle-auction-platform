@@ -16,9 +16,8 @@ export const AUCTION_PHASE_LABEL: Record<AuctionPhase, string> = {
   PENDING: "Pending",
 }
 
-type BadgeStyle = {
+export type BadgeStyle = {
   label: string
-  /** Background and text colour classes, merged over the Badge defaults. */
   className: string
 }
 
