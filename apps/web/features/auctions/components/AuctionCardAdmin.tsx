@@ -29,11 +29,16 @@ export const AuctionCardAdmin = ({
     <Card className="h-full cursor-pointer pt-0 transition-shadow hover:shadow-md hover:ring-foreground/20">
       <VehiclePhoto vehicle={vehicle} />
       <CardHeader>
-        <CardAction className="flex items-center gap-2">
+        <CardAction className="flex flex-col items-end gap-1">
           {auction.status === "ENDED" ? (
             <AuctionResultBadge result={auction.result} />
           ) : (
             <AuctionStatusBadge status={auction.status} />
+          )}
+          {auction.bidCount > 0 && (
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {auction.bidCount} {auction.bidCount === 1 ? "bid" : "bids"}
+            </span>
           )}
         </CardAction>
         <CardTitle className="truncate">
