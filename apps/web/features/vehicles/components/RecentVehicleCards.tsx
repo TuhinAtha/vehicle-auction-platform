@@ -1,6 +1,7 @@
 "use client"
 
 import { LoadError } from "@/components/LoadError"
+import type { VehicleSummary } from "@repo/shared"
 import { useController } from "react-hook-form"
 
 import {
@@ -13,24 +14,20 @@ import {
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { distance } from "@/lib/intl"
-import { RECENT_VEHICLES_LIMIT } from "../data/constants"
-import { useVehicles } from "../hooks/useVehicles"
 
-export const RecentVehicleCards = () => {
+export const RecentVehicleCards = ({
+  vehicles,
+}: {
+  vehicles?: VehicleSummary[]
+}) => {
   const { field, fieldState } = useController<{ vehicleId: string }>({
     name: "vehicleId",
   })
-  const { data, isPending, isError } = useVehicles({
-    queryParams: { availability: "UNLISTED", limit: RECENT_VEHICLES_LIMIT },
-  })
 
-  if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading vehicles…</p>
-  }
-  if (isError) {
+  if (!vehicles) {
     return <LoadError>Couldn&apos;t load vehicles. Please try again.</LoadError>
   }
-  if (data.length === 0) {
+  if (vehicles.length === 0) {
     return (
       <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
         No vehicles available.
@@ -46,7 +43,7 @@ export const RecentVehicleCards = () => {
         aria-label="Vehicle"
         className="grid gap-4 sm:grid-cols-3"
       >
-        {data.map((vehicle) => (
+        {vehicles.map((vehicle) => (
           <FieldLabel key={vehicle.id} htmlFor={vehicle.id}>
             <Field orientation="horizontal">
               <FieldContent>

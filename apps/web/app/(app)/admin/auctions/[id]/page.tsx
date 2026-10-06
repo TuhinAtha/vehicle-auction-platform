@@ -1,5 +1,6 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import { notFound } from "next/navigation"
+import type { AuctionDetailAdmin } from "@repo/shared"
+import { notFound, redirect } from "next/navigation"
 
 import { Page } from "@/components/Page"
 import { PageContent } from "@/components/PageContent"
@@ -7,6 +8,7 @@ import { PageHeader } from "@/components/PageHeader"
 import { AUCTION_PHASE_LABEL } from "@/constants/auction.constant"
 import { AuctionDetailContainer } from "@/features/auctions"
 import { getAuctionQuery } from "@/features/auctions/data/queries"
+import { getAuctionPhase } from "@/features/auctions/lib/getAuctionPhase"
 import {
   loadAuctionsSearchParams,
   serializeAuctionsSearchParams,
@@ -23,12 +25,17 @@ export default async function AdminAuctionPage({
   searchParams: SearchParams
 }) {
   const { id } = await params
-  const { phase } = await loadAuctionsSearchParams(searchParams)
+  const queryParams = await loadAuctionsSearchParams(searchParams)
   const queryClient = getQueryClient()
   await prefetchAuction(queryClient, id)
 
   const auction = queryClient.getQueryData(getAuctionQuery(id).queryKey)
   if (!auction) notFound()
+
+  const phase = getAuctionPhase(auction as AuctionDetailAdmin)
+  if (queryParams.phase !== phase) {
+    redirect(serializeAuctionsSearchParams(`/admin/auctions/${id}`, { phase }))
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -36,16 +43,10 @@ export default async function AdminAuctionPage({
         <PageHeader
           breadcrumbs={[
             { label: "Auctions" },
-            ...(phase
-              ? [
-                  {
-                    label: AUCTION_PHASE_LABEL[phase],
-                    href: serializeAuctionsSearchParams("/admin/auctions", {
-                      phase,
-                    }),
-                  },
-                ]
-              : []),
+            {
+              label: AUCTION_PHASE_LABEL[phase],
+              href: serializeAuctionsSearchParams("/admin/auctions", { phase }),
+            },
             { label: `${auction.vehicle.make} ${auction.vehicle.model}` },
           ]}
         />

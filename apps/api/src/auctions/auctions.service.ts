@@ -20,6 +20,7 @@ import {
 } from '@repo/shared'
 import { countBy, groupBy, maxBy, omit } from 'es-toolkit'
 import {
+  type FindOptionsOrder,
   type FindOptionsSelect,
   type FindOptionsWhere,
   In,
@@ -28,6 +29,7 @@ import {
   Not,
   Repository,
 } from 'typeorm'
+import { WINNING_BID_ORDER } from '../bids/bid.constant.js'
 import { Bid } from '../bids/entities/bid.entity.js'
 import { VehiclesService } from '../vehicles/vehicles.service.js'
 import { CreateAuctionDto } from './dto/create-auction.dto.js'
@@ -35,9 +37,13 @@ import { Auction } from './entities/auction.entity.js'
 
 const DEALER_HIDDEN = new Set<string>(DEALER_AUCTION_EXCLUDED_FIELDS)
 const DEALER_PHASES = new Set<AuctionPhase>(DEALER_AUCTION_PHASES)
-/** The highest bid wins; on a tie, the earlier one. */
-const WINNING_BID_ORDER = { amount: 'DESC', createdAt: 'ASC' } as const
 const STATUS_SYNC_INTERVAL_MS = 10_000
+const PHASE_ORDER: Record<AuctionPhase, FindOptionsOrder<Auction>> = {
+  SCHEDULED: { startsAt: 'ASC' },
+  LIVE: { endsAt: 'ASC' },
+  PENDING: { startsAt: 'ASC' },
+  COMPLETED: { endsAt: 'DESC' },
+}
 
 @Injectable()
 export class AuctionsService {
@@ -49,7 +55,12 @@ export class AuctionsService {
 
   async create(createAuctionDto: CreateAuctionDto) {
     const { startsAt, endsAt, ...rest } = createAuctionDto
-    await this.vehiclesService.findOne(rest.vehicleId)
+    const vehicle = await this.vehiclesService.findOne(rest.vehicleId)
+    if (vehicle.availability !== 'AVAILABLE') {
+      throw new ConflictException(
+        `Vehicle ${vehicle.id} is already in an auction or sold`,
+      )
+    }
 
     const auction = this.auctions.create({
       ...rest,
@@ -82,7 +93,7 @@ export class AuctionsService {
       select: this.selectFor(viewer.role),
       where: await this.getClauseForPhase(viewer, phase),
       relations: { vehicle: true },
-      order: phase === 'LIVE' ? { endsAt: 'ASC' } : { startsAt: 'ASC' },
+      order: PHASE_ORDER[phase],
     })
     if (viewer.role === 'DEALER') return auctions
 
@@ -258,6 +269,8 @@ export class AuctionsService {
       }
       case 'PENDING':
         return { status: 'ENDED', result: IsNull() }
+      case 'COMPLETED':
+        return { status: 'ENDED', result: Not(IsNull()) }
     }
   }
 

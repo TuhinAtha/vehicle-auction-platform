@@ -11,7 +11,7 @@ import {
 import { PageHeader } from "@/components/PageHeader"
 import { PageContent } from "@/components/PageContent"
 import {
-  AUCTION_PHASE_LABEL,
+  DEALER_AUCTION_PHASE_LABEL,
   DEFAULT_AUCTION_PHASE,
 } from "@/constants/auction.constant"
 import { redirect } from "next/navigation"
@@ -43,7 +43,7 @@ export default async function DealerAuctionsPage({
         <PageHeader
           breadcrumbs={[
             { label: "Auctions" },
-            { label: AUCTION_PHASE_LABEL[phase] },
+            { label: DEALER_AUCTION_PHASE_LABEL[phase] },
           ]}
         />
         <PageContent>

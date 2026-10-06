@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import { Page } from "@/components/Page"
 import { PageContent } from "@/components/PageContent"
@@ -23,12 +23,17 @@ export default async function DealerMyBidPage({
   searchParams: SearchParams
 }) {
   const { id } = await params
-  const { phase } = await loadMyBidsSearchParams(searchParams)
+  const queryParams = await loadMyBidsSearchParams(searchParams)
   const queryClient = getQueryClient()
   await prefetchMyBid(queryClient, id)
 
   const auction = queryClient.getQueryData(getMyBidQuery(id).queryKey)
-  if (!auction) notFound()
+  if (!auction?.bidStatus) notFound()
+
+  const phase = auction.bidStatus
+  if (queryParams.phase !== phase) {
+    redirect(serializeMyBidsSearchParams(`/dealer/mybids/${id}`, { phase }))
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -36,16 +41,10 @@ export default async function DealerMyBidPage({
         <PageHeader
           breadcrumbs={[
             { label: "My bids" },
-            ...(phase
-              ? [
-                  {
-                    label: BID_STATUS_BADGE[phase].label,
-                    href: serializeMyBidsSearchParams("/dealer/mybids", {
-                      phase,
-                    }),
-                  },
-                ]
-              : []),
+            {
+              label: BID_STATUS_BADGE[phase].label,
+              href: serializeMyBidsSearchParams("/dealer/mybids", { phase }),
+            },
             { label: `${auction.vehicle.make} ${auction.vehicle.model}` },
           ]}
         />

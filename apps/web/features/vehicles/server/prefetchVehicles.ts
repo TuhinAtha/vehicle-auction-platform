@@ -1,10 +1,8 @@
-import type { VehicleSummary } from "@repo/shared"
 import type { QueryClient } from "@tanstack/react-query"
 
-import { fetchApi } from "@/lib/fetch-api"
-import { VEHICLE_ENDPOINTS } from "../data/endpoints"
 import { getVehiclesQuery } from "../data/queries"
 import type { VehiclesQueryParams } from "../types"
+import { fetchVehicles } from "./fetchVehicles"
 
 export async function prefetchVehicles(
   queryClient: QueryClient,
@@ -13,8 +11,7 @@ export async function prefetchVehicles(
   await queryClient
     .query({
       ...getVehiclesQuery({ queryParams }),
-      queryFn: () =>
-        fetchApi<VehicleSummary[]>(VEHICLE_ENDPOINTS.root, { queryParams }),
+      queryFn: () => fetchVehicles(queryParams),
     })
     .catch(() => undefined)
 }

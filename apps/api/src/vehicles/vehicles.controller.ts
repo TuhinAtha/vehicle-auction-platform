@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Param,
+  ParseUUIDPipe,
   Post,
   Body,
   Query,
@@ -44,5 +46,11 @@ export class VehiclesController {
   @Role('ADMIN')
   countByAvailability() {
     return this.vehiclesService.countByAvailability()
+  }
+
+  @Get(':id')
+  @Role('ADMIN')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.vehiclesService.findOne(id)
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import type { Vehicle } from "@repo/shared"
+import type { Vehicle, VehicleDetail, VehicleSummary } from "@repo/shared"
 import { useQueryClient } from "@tanstack/react-query"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -20,6 +20,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DEFAULT_AUCTION_PHASE } from "@/constants/auction.constant"
 import { ApiError } from "@/lib/http"
 import { RecentVehicleCards } from "@/features/vehicles/components/RecentVehicleCards"
+import { SelectedVehicle } from "@/features/vehicles/components/SelectedVehicle"
 import { VehicleFields } from "@/features/vehicles/components/VehicleFields"
 import { createVehicle } from "@/features/vehicles/data/mutations"
 import { VEHICLE_QUERY_KEYS } from "@/features/vehicles/data/queryKeys"
@@ -33,11 +34,17 @@ import { AuctionFields } from "./AuctionFields"
 
 const AUCTIONS_PATH = "/admin/auctions"
 
-export const CreateAuctionForm = () => {
+export const CreateAuctionForm = ({
+  vehicle,
+  recentVehicles,
+}: {
+  vehicle?: VehicleDetail
+  recentVehicles?: VehicleSummary[]
+}) => {
   const router = useRouter()
   const queryClient = useQueryClient()
   const [createdVehicle, setCreatedVehicle] = useState<Vehicle | null>(null)
-  const form = useAuctionAndVehicleForm()
+  const form = useAuctionAndVehicleForm(vehicle?.id)
   const {
     control,
     handleSubmit,
@@ -88,21 +95,25 @@ export const CreateAuctionForm = () => {
         <Card>
           <CardHeader>
             <CardTitle>Vehicle</CardTitle>
-            <CardAction>
-              <Tabs
-                value={vehicleSource}
-                onValueChange={(value) => setValue("vehicleSource", value)}
-              >
-                <TabsList>
-                  <TabsTrigger value="recent">Recently added</TabsTrigger>
-                  <TabsTrigger value="new">New vehicle</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </CardAction>
+            {!vehicle && (
+              <CardAction>
+                <Tabs
+                  value={vehicleSource}
+                  onValueChange={(value) => setValue("vehicleSource", value)}
+                >
+                  <TabsList>
+                    <TabsTrigger value="new">New vehicle</TabsTrigger>
+                    <TabsTrigger value="recent">Recently added</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </CardAction>
+            )}
           </CardHeader>
           <CardContent>
-            {vehicleSource === "recent" ? (
-              <RecentVehicleCards />
+            {vehicle ? (
+              <SelectedVehicle vehicle={vehicle} />
+            ) : vehicleSource === "recent" ? (
+              <RecentVehicleCards vehicles={recentVehicles} />
             ) : (
               <VehicleFields />
             )}

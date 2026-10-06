@@ -3,6 +3,7 @@ import type {
   AuctionResult,
   AuctionStatus,
   BidStatus,
+  DealerAuctionPhase,
 } from "@repo/shared"
 
 export const DEFAULT_AUCTION_PHASE: AuctionPhase = "LIVE"
@@ -12,6 +13,12 @@ export const AUCTION_PHASE_LABEL: Record<AuctionPhase, string> = {
   SCHEDULED: "Scheduled",
   LIVE: "Live",
   PENDING: "Pending",
+  COMPLETED: "Completed",
+}
+
+export const DEALER_AUCTION_PHASE_LABEL: Record<DealerAuctionPhase, string> = {
+  SCHEDULED: "Scheduled",
+  LIVE: "Open to bid",
 }
 
 export type BadgeStyle = {
@@ -57,6 +64,7 @@ export const AUCTION_PHASE_BADGE_CLASS: Record<AuctionPhase, string> = {
   PENDING: AUCTION_PENDING_BADGE.className,
   LIVE: AUCTION_STATUS_BADGE.LIVE.className,
   SCHEDULED: AUCTION_STATUS_BADGE.SCHEDULED.className,
+  COMPLETED: AUCTION_STATUS_BADGE.ENDED.className,
 }
 
 export const BID_STATUS_BADGE: Record<BidStatus, BadgeStyle> = {
@@ -65,7 +73,7 @@ export const BID_STATUS_BADGE: Record<BidStatus, BadgeStyle> = {
     className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
   },
   PENDING: {
-    label: "Pending",
+    label: "Awaiting result",
     className:
       "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
   },

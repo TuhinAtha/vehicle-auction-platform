@@ -8,12 +8,12 @@ import {
   type CreateAuctionFormValues,
 } from "../lib/createAuctionFormSchema"
 
-export const useAuctionAndVehicleForm = () => {
+export const useAuctionAndVehicleForm = (vehicleId = "") => {
   return useForm<CreateAuctionFormValues>({
     resolver: zodResolver(createAuctionFormSchema),
     defaultValues: {
-      vehicleSource: "recent",
-      vehicleId: "",
+      vehicleSource: vehicleId ? "recent" : "new",
+      vehicleId,
       ...defaultVehicleValues,
       ...defaultAuctionValues,
     },

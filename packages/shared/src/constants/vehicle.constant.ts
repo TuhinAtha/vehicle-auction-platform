@@ -15,7 +15,7 @@ export const VEHICLE_PHOTO_TYPES: Record<string, string> = {
 }
 
 export const VEHICLE_AVAILABILITIES = [
-  'UNLISTED', // never been in an auction
+  'AVAILABLE', // never been in an auction, or all its auctions ended UNSOLD
+  'IN_AUCTION', // an auction with no result yet
   'SOLD', // an auction with result SOLD
-  'UNSOLD', // all its auctions ended UNSOLD
 ] as const

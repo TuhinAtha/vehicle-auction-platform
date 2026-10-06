@@ -8,8 +8,8 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { SidebarMenu } from "@/components/ui/sidebar"
 import {
   AUCTION_PHASE_BADGE_CLASS,
-  AUCTION_PHASE_LABEL,
   BID_STATUS_BADGE,
+  DEALER_AUCTION_PHASE_LABEL,
 } from "@/constants/auction.constant"
 import {
   getAuctionPhaseCountsQuery,
@@ -43,7 +43,7 @@ export const DealerSidebarContent = () => {
             count={phaseCounts && (phaseCounts[phase] ?? 0)}
             countClassName={AUCTION_PHASE_BADGE_CLASS[phase]}
           >
-            {AUCTION_PHASE_LABEL[phase]}
+            {DEALER_AUCTION_PHASE_LABEL[phase]}
           </NavSubLink>
         ))}
       </NavGroup>

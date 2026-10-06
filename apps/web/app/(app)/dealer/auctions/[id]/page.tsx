@@ -1,16 +1,17 @@
-import { DEALER_AUCTION_PHASES } from "@repo/shared"
+import { type AuctionDetailDealer, DEALER_AUCTION_PHASES } from "@repo/shared"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import { Page } from "@/components/Page"
 import { PageContent } from "@/components/PageContent"
 import { PageHeader } from "@/components/PageHeader"
-import { AUCTION_PHASE_LABEL } from "@/constants/auction.constant"
+import { DEALER_AUCTION_PHASE_LABEL } from "@/constants/auction.constant"
 import { AuctionDetailContainer } from "@/features/auctions"
 import { getAuctionQuery } from "@/features/auctions/data/queries"
 import {
   loadAuctionsSearchParams,
   serializeAuctionsSearchParams,
+  serializeMyBidsSearchParams,
 } from "@/features/auctions/searchParams"
 import { prefetchAuction } from "@/features/auctions/server/prefetchAuction"
 import { getQueryClient } from "@/lib/query-client"
@@ -25,14 +26,26 @@ export default async function DealerAuctionPage({
 }) {
   const { id } = await params
   const queryParams = await loadAuctionsSearchParams(searchParams)
-  const phase = DEALER_AUCTION_PHASES.find(
-    (dealerPhase) => dealerPhase === queryParams.phase
-  )
   const queryClient = getQueryClient()
   await prefetchAuction(queryClient, id)
 
   const auction = queryClient.getQueryData(getAuctionQuery(id).queryKey)
   if (!auction) notFound()
+
+  const { bidStatus } = auction as AuctionDetailDealer
+  if (bidStatus) {
+    redirect(
+      serializeMyBidsSearchParams(`/dealer/mybids/${id}`, { phase: bidStatus })
+    )
+  }
+
+  const phase =
+    DEALER_AUCTION_PHASES.find(
+      (dealerPhase) => dealerPhase === auction.status
+    ) ?? null
+  if (queryParams.phase !== phase) {
+    redirect(serializeAuctionsSearchParams(`/dealer/auctions/${id}`, { phase }))
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -43,7 +56,7 @@ export default async function DealerAuctionPage({
             ...(phase
               ? [
                   {
-                    label: AUCTION_PHASE_LABEL[phase],
+                    label: DEALER_AUCTION_PHASE_LABEL[phase],
                     href: serializeAuctionsSearchParams("/dealer/auctions", {
                       phase,
                     }),

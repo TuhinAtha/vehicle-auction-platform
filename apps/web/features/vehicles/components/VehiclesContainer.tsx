@@ -18,5 +18,7 @@ export const VehiclesContainer = ({ queryParams }: VehiclesContainerProps) => {
     return <LoadError>Couldn&apos;t load vehicles. Please try again.</LoadError>
   }
 
-  return <VehicleCardGrid vehicles={data} />
+  return (
+    <VehicleCardGrid vehicles={data} availability={queryParams.availability} />
+  )
 }

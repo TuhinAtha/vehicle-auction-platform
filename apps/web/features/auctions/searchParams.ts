@@ -2,6 +2,7 @@ import { AUCTION_PHASES, BID_STATUSES } from "@repo/shared"
 import {
   createLoader,
   createSerializer,
+  parseAsString,
   parseAsStringLiteral,
 } from "nuqs/server"
 
@@ -17,3 +18,7 @@ const myBidsSearchParams = {
 }
 export const loadMyBidsSearchParams = createLoader(myBidsSearchParams)
 export const serializeMyBidsSearchParams = createSerializer(myBidsSearchParams)
+
+export const loadNewAuctionSearchParams = createLoader({
+  vehicleId: parseAsString,
+})

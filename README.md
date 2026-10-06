@@ -155,7 +155,7 @@ To target one package, use a filter, for example `pnpm --filter @repo/api test` 
 Next.js App Router application with three areas:
 
 - `/login`
-- `/admin` — auctions (list, detail, create), vehicles (list by availability, create)
+- `/admin` — auctions (list, detail, create), vehicles (list by availability, detail with auction history, create)
 - `/dealer` — auctions (scheduled and live), my bids (list, detail)
 
 Key patterns:
@@ -164,10 +164,10 @@ Key patterns:
 - **Session**: on login, Next stores the API's access token in an httpOnly cookie (`accessToken`). JavaScript in the browser never sees it.
 - **BFF**: browser requests go to `/api/*` on the Next app (`app/api/[...path]/route.ts`), which forwards them to NestJS with the cookie turned into a bearer token. `/uploads/*` is rewritten to the API as well.
 - **Data fetching**: TanStack Query. Server pages prefetch the query so the data is in the first render instead of loading empty and then fetching. On the server they call NestJS directly, since the server can read the auth cookie itself and an extra hop through its own BFF would be pointless. The query key is the same one the client uses, so the client picks the data up from the cache. If the prefetch fails, the client simply fetches again through the BFF.
-- **URL state**: list filters (`phase`, `availability`) live in the query string via nuqs and drive both the sidebar highlight and the breadcrumbs.
+- **URL state**: list filters (`phase`, `availability`) live in the query string via nuqs and drive both the sidebar highlight and the breadcrumbs. A detail page compares the filter in its URL with the item's real state and redirects to the matching URL on load, so a stale or missing filter corrects itself.
 - **Feature folders**: `features/auctions` and `features/vehicles` each hold their components, query definitions (`data/`), hooks and server prefetch functions.
 
-`/admin`, `/dealer` and `/admin/vehicles/[vehicle]` are placeholder pages.
+`/admin` and `/dealer` are placeholder pages.
 
 ### API (`apps/api`)
 
@@ -176,7 +176,7 @@ NestJS REST API under the `/api` prefix.
 - **Auth**: `POST /api/auth/login` is the only public route. Two global guards protect everything else: one verifies the bearer token, the other enforces `@Role('ADMIN' | 'DEALER')` where a handler declares it.
 - **Validation**: a global `ValidationPipe` with DTO classes; unknown fields and unknown query parameters are rejected.
 - **Modules**:
-  - `vehicles` (admin): create, list by availability, counts, photo upload.
+  - `vehicles` (admin): create, list by availability, counts, detail with auction history, photo upload.
   - `auctions`: create and decide results (admin); list by phase, counts and detail (both roles, with dealer-specific views); my-bids list, counts and detail (dealer).
   - `bids` (dealer): place a bid on an auction.
   - `health`: database check (requires a token like every other route).
@@ -205,7 +205,7 @@ SCHEDULED ──start time──▶ LIVE ──end time──▶ ENDED ──adm
 
 - An auction has a `status` (`SCHEDULED`, `LIVE`, `ENDED`) and, once decided, a `result` (`SOLD`, `UNSOLD`).
 - A background job in the API runs every 10 seconds and moves auctions to `LIVE` at their start time and `ENDED` at their end time. This is not ideal, but it is a simple solution.
-- The UI groups open auctions into phases: `SCHEDULED`, `LIVE` and `PENDING` (ended, awaiting a result).
+- The UI groups auctions into phases: `SCHEDULED`, `LIVE`, `PENDING` (ended, awaiting a result) and `COMPLETED` (sold or unsold). Dealers get `SCHEDULED` and `LIVE` only; their `LIVE` list leaves out auctions they have already bid on and is labelled "Open to bid".
 
 ### Bidding
 
@@ -221,17 +221,17 @@ SCHEDULED ──start time──▶ LIVE ──end time──▶ ENDED ──adm
 
 ### Vehicles
 
-Each vehicle falls into one availability list, derived from its auctions:
+Every vehicle is in exactly one availability list, derived from its auctions:
 
-- `UNLISTED` — never been in an auction
+- `AVAILABLE` — never been in an auction, or all its auctions ended unsold
+- `IN_AUCTION` — has an auction with no result yet (scheduled, live or pending)
 - `SOLD` — has an auction that ended sold
-- `UNSOLD` — all its auctions ended unsold
 
-Vehicles in a running or pending auction appear under Auctions, not in these lists. The new-auction form offers unlisted vehicles only; the API itself does not check a vehicle's availability when an auction is created.
+An auction can only be created for an `AVAILABLE` vehicle; the API refuses it otherwise. A vehicle whose auction ended unsold is available again and can be relisted from its page, which also lists all its auctions.
 
 ### Dealer bid status
 
-`ACTIVE` (auction not ended), `PENDING` (ended, no result), `WON`, `NOT_WON` (sold to someone else, or unsold).
+`ACTIVE` (auction not ended), `PENDING` (ended, no result; shown as "Awaiting result"), `WON`, `NOT_WON` (sold to someone else, or unsold).
 
 There is no payment handling and no user registration; users exist only through the seed script.
 
