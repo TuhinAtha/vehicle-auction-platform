@@ -7,8 +7,8 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test:e2e": "pnpm --filter @repo/api test:e2e",
-    "db:reset": "pnpm --filter @repo/api db:reset",
+    "test:e2e": "pnpm --filter @repo/shared build && pnpm --filter @repo/api test:e2e",
+    "db:reset": "pnpm --filter @repo/shared build && pnpm --filter @repo/api db:reset",
     "knip": "knip",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
